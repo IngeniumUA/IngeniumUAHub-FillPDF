@@ -8,30 +8,38 @@ from email.mime.text import MIMEText
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from email.message import EmailMessage
 
 import config_file
 
 
 class Mailing:
+    # Constructor
     def __init__(self, mail_receivers, mail_subject, mail_content, attachments):
         self.mailReceivers = mail_receivers
         self.mailSubject = mail_subject
         self.mailContent = mail_content
         self.attachments = attachments
 
+    # Build the service that connects to Gmail API
     def build_service(self):
+        # Create credentials form the service account file
         credentials = service_account.Credentials.from_service_account_file(filename=config_file.serviceAccountFile,
                                                                             scopes=config_file.scopes)
+        # Link the correct email address to the credentials
         credentials = credentials.with_subject(config_file.emailSender)
+        # Build the service
         service = build("gmail", "v1", credentials=credentials)
         return service
 
-    def build_message(self, mail_receiver):
-        message = MIMEMultipart()
-        message["To"] = mail_receiver
-        message["From"] = config_file.emailSender
-        message["Subject"] = self.mailSubject
+    #  Builds the contents of the mail
+    def build_message(self, mailReceiver):
+        # MIME stands for Multipurpose Internet Mail Extensions and is an internet standard that is used to support the transfer of single or multiple text
+        # and non-text attachments
+
+        message = MIMEMultipart()  # Create an empty MIMEMultipart message
+        message["To"] = mailReceiver  # Set the receivers
+        message["From"] = config_file.emailSender  # Add the sender
+        message["Subject"] = self.mailSubject  # Set the subject
         mailContent = MIMEText(self.mailContent, "plain")
         message.attach(mailContent)
 
@@ -70,7 +78,8 @@ if __name__ == "__main__":
 """
 
 if __name__ == "__main__":
-    mailReceivers = ["yorben_joosen01@hotmail.com"]
+    mailReceiversCC = ["yorben_joosen01@hotmail.com", "robbe.dehelt@student.uantwerpen.be"]
+    mailReceiversBCC = ["webmaster@ingeniumua.be"]
     attachments = [r"C:\Users\yorbe\Downloads\LustrumCrick.pdf", r"C:\Users\yorbe\Downloads\Book1.xlsx"]
-    mailing = Mailing(mailReceivers, "testrobbe", "varkens", attachments)
+    mailing = Mailing(mail_receivers=mailReceiversCC, mail_subject="test", mail_content="bloebloe", attachments=attachments)
     mailing.send_message()
