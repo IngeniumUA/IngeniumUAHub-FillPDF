@@ -71,14 +71,3 @@ class Mailing:
         for mailReceiver in self.mailReceivers:
             message = self.build_message(mailReceiver)
             service.users().messages().send(userId="me", body=message).execute()
-
-
-if __name__ == "__main__":
-    # mail_receivers, mail_subject, mail_content, attachments, content_type
-    mailReceivers = ["michael.schoenmakers@student.uantwerpen.be"]
-    mailSubject = "ik hou van jou"
-    mailContent = "xxx yorben"
-    attachments = []
-    contentType = "plain"
-    mailing = Mailing(mail_receivers=mailReceivers, mail_subject=mailSubject, mail_content=mailContent, attachments=attachments, content_type=contentType)
-    mailing.send_message()
