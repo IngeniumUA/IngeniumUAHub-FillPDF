@@ -9,10 +9,10 @@ from email.mime.text import MIMEText
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
-import config_file
+from Mailing import config_file
 
 
-class Mailing:
+class MailingClass:
     # Constructor
     def __init__(self, mail_receivers, mail_subject, mail_content, attachments, content_type):
         self.mailReceivers = mail_receivers
