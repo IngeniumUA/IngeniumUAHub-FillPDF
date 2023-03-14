@@ -14,11 +14,12 @@ import config_file
 
 class Mailing:
     # Constructor
-    def __init__(self, mail_receivers, mail_subject, mail_content, attachments):
+    def __init__(self, mail_receivers, mail_subject, mail_content, attachments, content_type):
         self.mailReceivers = mail_receivers
         self.mailSubject = mail_subject
         self.mailContent = mail_content
         self.attachments = attachments
+        self.contentType = content_type
 
     # Build the service that connects to Gmail API
     def build_service(self):
@@ -32,30 +33,32 @@ class Mailing:
         return service
 
     #  Builds the contents of the mail
-    def build_message(self, mailReceiver):
+    def build_message(self, mail_receiver):
         # MIME stands for Multipurpose Internet Mail Extensions and is an internet standard that is used to support the transfer of single or multiple text
         # and non-text attachments
 
         message = MIMEMultipart()  # Create an empty MIMEMultipart message
-        message["To"] = mailReceiver  # Set the receivers
+        message["To"] = mail_receiver  # Set the receivers
         message["From"] = config_file.emailSender  # Add the sender
         message["Subject"] = self.mailSubject  # Set the subject
-        mailContent = MIMEText(self.mailContent, "plain")
-        message.attach(mailContent)
+        mailContent = MIMEText(self.mailContent, self.contentType)  # Make MIMEText of the content of the mail and its type (html and plain)
+        message.attach(mailContent)  # Add the content to the message
 
+        # Loop over the list of attachments
         for attachment in self.attachments:
-            attachmentPath = attachment
-            attachmentFileName = os.path.basename(attachment)
-            fileType, encoding = mimetypes.guess_type(attachmentFileName)
-            mainType, subType = fileType.split("/")
+            attachmentPath = attachment  # Save the path, because this is needed later on
+            attachmentFileName = os.path.basename(attachment)  # Get the filename from the attachment
+            fileType, encoding = mimetypes.guess_type(attachmentFileName)  # Get the filetype and encoding from the attachment name
+            mainType, subType = fileType.split("/")  # Get the main and subtype from the filetype
             attachmentData = MIMEBase(mainType, subType)
 
+            # Open the attachment, read it and write its content into attachmentData
             with open(attachmentPath, "rb") as file:  # "rb" = read, binary mode (e.g. images)
                 attachmentData.set_payload(file.read())
+            # Add header to attachmentData so that the name of the attachment stays
             attachmentData.add_header("Content-Disposition", "attachment", filename=attachmentFileName)
-            encode_base64(attachmentData)
-            #  Add the attachment to the message
-            message.attach(attachmentData)
+            encode_base64(attachmentData)  # Encode the attachmentData
+            message.attach(attachmentData)  # Add the attachmentData to the message
 
         encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
         create_message = {
@@ -71,15 +74,12 @@ class Mailing:
             print(send_message)
 
 
-"""
 if __name__ == "__main__":
-    mailing = Mailing(["yorben_joosen01@hotmail.com", "robbe.dehelt@student.uantwerpen.be"], "testrobbe", "varkens")
-    mailing.send_message()
-"""
-
-if __name__ == "__main__":
-    mailReceiversCC = ["yorben_joosen01@hotmail.com", "robbe.dehelt@student.uantwerpen.be"]
-    mailReceiversBCC = ["webmaster@ingeniumua.be"]
-    attachments = [r"C:\Users\yorbe\Downloads\LustrumCrick.pdf", r"C:\Users\yorbe\Downloads\Book1.xlsx"]
-    mailing = Mailing(mail_receivers=mailReceiversCC, mail_subject="test", mail_content="bloebloe", attachments=attachments)
+    # mail_receivers, mail_subject, mail_content, attachments, content_type
+    mailReceivers = ["yorben_joosen01@hotmail.com"]
+    mailSubject = "test"
+    mailContent = "beepbeep"
+    attachments = []
+    contentType = "plain"
+    mailing = Mailing(mail_receivers=mailReceivers, mail_subject=mailSubject, mail_content=mailContent, attachments=attachments, content_type=contentType)
     mailing.send_message()
