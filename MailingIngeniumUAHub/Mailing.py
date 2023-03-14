@@ -9,7 +9,7 @@ from email.mime.text import MIMEText
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
-from Mailing import config_file
+from MailingIngeniumUAHub import config_file
 
 
 class MailingClass:
