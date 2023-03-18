@@ -9,19 +9,19 @@ from email.mime.text import MIMEText
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
-from Mailing import config_file
-
 
 class MailingClass:
     """
     Implements the Gmail API to send mails
     """
     # Constructor
-    def __init__(self, mail_receivers, mail_subject, mail_content, attachments=None, content_type="plain"):
+    def __init__(self, mail_receivers, mail_subject, mail_content, mail_sender, service_file_path, attachments=None, content_type="plain"):
         """
         :param mail_receivers: Receivers as a list of strings
         :param mail_subject: Subject of the mail as a string
         :param mail_content: Content of the mail as a string, options: html and plain
+        :param mail_sender: Sender of the mail
+        :param service_file_path: Path to the service account json
         :param attachments: Attachment paths as a list of strings
         :param content_type: Type of the content as string, options: string with html code in or normal string
         """
@@ -32,26 +32,31 @@ class MailingClass:
         self.mailContent = mail_content
         self.attachments = attachments
         self.contentType = content_type
+        self.scopes = ["https://www.googleapis.com/auth/gmail.send"]
+        self.mailSender = mail_sender
+        if os.path.exists(service_file_path):
+            self.serviceFilePath = service_file_path
+        else:
+            raise Exception("Service account json path does not exist")
 
     # Build the service that connects to Gmail API
-    def build_service(self):
+    def _build_service(self):
         # Create credentials form the service account file
-        credentials = service_account.Credentials.from_service_account_file(filename=config_file.serviceAccountFile,
-                                                                            scopes=config_file.scopes)
+        credentials = service_account.Credentials.from_service_account_file(filename=self.serviceFilePath, scopes=self.scopes)
         # Link the correct email address to the credentials
-        credentials = credentials.with_subject(config_file.emailSender)
+        credentials = credentials.with_subject(self.mailSender)
         # Build the service
         service = build("gmail", "v1", credentials=credentials)
         return service
 
     #  Builds the contents of the mail
-    def build_message(self, mail_receiver):
+    def _build_message(self, mail_receiver):
         # MIME stands for Multipurpose Internet Mail Extensions and is an internet standard that is used to support the transfer of single or multiple text
         # and non-text attachments
 
         message = MIMEMultipart()  # Create an empty MIMEMultipart message
         message["To"] = mail_receiver  # Set the receivers
-        message["From"] = config_file.emailSender  # Add the sender
+        message["From"] = self.mailSender  # Add the sender
         message["Subject"] = self.mailSubject  # Set the subject
         mailContent = MIMEText(self.mailContent, self.contentType)  # Make MIMEText of the content of the mail and its type (html and plain)
         message.attach(mailContent)  # Add the content to the message
@@ -79,7 +84,7 @@ class MailingClass:
         return create_message
 
     def send_message(self):
-        service = self.build_service()
+        service = self._build_service()
         for mailReceiver in self.mailReceivers:
-            message = self.build_message(mailReceiver)
+            message = self._build_message(mailReceiver)
             service.users().messages().send(userId="me", body=message).execute()
