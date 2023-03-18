@@ -13,8 +13,18 @@ from Mailing import config_file
 
 
 class MailingClass:
+    """
+    Implements the Gmail API to send mails
+    """
     # Constructor
     def __init__(self, mail_receivers, mail_subject, mail_content, attachments, content_type):
+        """
+        :param mail_receivers: Receivers as a list of strings
+        :param mail_subject: Subject of the mail as a string
+        :param mail_content: Content of the mail as a string, options: html and plain
+        :param attachments: Attachment paths as a list of strings
+        :param content_type: Type of the content as string, options: string with html code in or normal string
+        """
         self.mailReceivers = mail_receivers
         self.mailSubject = mail_subject
         self.mailContent = mail_content
