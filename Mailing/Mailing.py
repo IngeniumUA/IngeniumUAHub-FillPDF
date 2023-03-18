@@ -17,7 +17,7 @@ class MailingClass:
     Implements the Gmail API to send mails
     """
     # Constructor
-    def __init__(self, mail_receivers, mail_subject, mail_content, attachments, content_type):
+    def __init__(self, mail_receivers, mail_subject, mail_content, attachments=None, content_type="plain"):
         """
         :param mail_receivers: Receivers as a list of strings
         :param mail_subject: Subject of the mail as a string
@@ -25,6 +25,8 @@ class MailingClass:
         :param attachments: Attachment paths as a list of strings
         :param content_type: Type of the content as string, options: string with html code in or normal string
         """
+        if attachments is None:
+            attachments = []
         self.mailReceivers = mail_receivers
         self.mailSubject = mail_subject
         self.mailContent = mail_content
