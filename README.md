@@ -1,10 +1,5 @@
-# Mailing
+# Add package to requirements.txt
 ```
-mailing = Mailing(mail_receivers=mailReceivers, mail_subject=mailSubject, mail_content=mailContent, attachments=attachments, content_type=contentType)
-mailReceivers = receivers as a list of strings
-mailSubject = subject of the mail as string
-mailContent = content of the mail as a string (plain or html)
-attachments = attachment paths as a list of strings
-contentType = type of the content as string (plain or html)
-mailing.send_message()
+git+https://acces_tokengithub.com/organization/repository.git
+In this case: git+https://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@github.com/IngeniumUA/Mailing.git
 ```
