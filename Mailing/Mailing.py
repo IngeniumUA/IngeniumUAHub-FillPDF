@@ -31,13 +31,18 @@ class MailingClass:
         self.mailSubject = mail_subject
         self.mailContent = mail_content
         self.attachments = attachments
-        self.contentType = content_type
         self.scopes = ["https://www.googleapis.com/auth/gmail.send"]
         self.mailSender = mail_sender
+        
         if os.path.exists(service_file_path):
             self.serviceFilePath = service_file_path
         else:
             raise Exception("Service account json path does not exist")
+
+        if content_type != "plain" or content_type != "html":
+            raise Exception("Wrong content type")
+        else:
+            self.contentType = content_type
 
     # Build the service that connects to Gmail API
     def _build_service(self):
