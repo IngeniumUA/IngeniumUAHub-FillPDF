@@ -7,6 +7,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError as GoogleHttpError
 
 
 class MailingClass:
@@ -46,17 +47,13 @@ class MailingClass:
         self.contentType = content_type
         self.service = self._build_service()
 
-    # Build the service that connects to Gmail API
     def _build_service(self):
-        # Create credentials form the service account file, subject = links the correct email address to the credentials
         credentials = service_account.Credentials.from_service_account_file(filename=self.serviceFilePath,
                                                                             scopes=self.scopes,
                                                                             subject=self.mailSender)
-        # Build the service
         service = build("gmail", "v1", credentials=credentials)
         return service
 
-    #  Builds the contents of the mail
     def _build_message(self, mail_receiver: str) -> dict:
         """
         :param mail_receiver: Receiver of the mail
@@ -96,4 +93,7 @@ class MailingClass:
     def send_message(self) -> None:
         for mailReceiver in self.mailReceivers:
             message = self._build_message(mailReceiver)
-            self.service.users().messages().send(userId="me", body=message).execute()
+            try:
+                self.service.users().messages().send(userId="me", body=message).execute()
+            except GoogleHttpError as error:
+                raise Exception(error.reason)
