@@ -15,8 +15,16 @@ class MailingClass:
     Implements the Gmail API to send mails
     """
 
-    def __init__(self, mail_receivers: list[str], mail_subject: str, mail_content: str, mail_sender: str,
-                 service_file_path: str, attachments: list[str] = None, content_type: str = "plain") -> None:
+    def __init__(
+        self,
+        mail_receivers: list[str],
+        mail_subject: str,
+        mail_content: str,
+        mail_sender: str,
+        service_file_path: str,
+        attachments: list[str] = None,
+        content_type: str = "plain",
+    ) -> None:
         """
         :param mail_receivers: Receivers
         :param mail_subject: Subject of the mail
@@ -48,9 +56,9 @@ class MailingClass:
         self.service = self._build_service()
 
     def _build_service(self):
-        credentials = service_account.Credentials.from_service_account_file(filename=self.serviceFilePath,
-                                                                            scopes=self.scopes,
-                                                                            subject=self.mailSender)
+        credentials = service_account.Credentials.from_service_account_file(
+            filename=self.serviceFilePath, scopes=self.scopes, subject=self.mailSender
+        )
         service = build("gmail", "v1", credentials=credentials)
         return service
 
@@ -70,30 +78,36 @@ class MailingClass:
 
         # Loop over the list of attachments
         for attachment in self.attachments:
-            attachmentPath = attachment  # Save the path, because this is needed later on
+            attachmentPath = (
+                attachment  # Save the path, because this is needed later on
+            )
             attachmentFileName = os_path.basename(attachment)
             fileType, encoding = mimetypes_guess_type(attachmentFileName)
             mainType, subType = fileType.split("/")
             attachmentData = MIMEBase(mainType, subType)
 
             # Open the attachment, read it and write its content into attachmentData
-            with open(attachmentPath, "rb") as file:  # "rb" = read, binary mode (e.g. images)
+            with open(
+                attachmentPath, "rb"
+            ) as file:  # "rb" = read, binary mode (e.g. images)
                 attachmentData.set_payload(file.read())
             # Add header to attachmentData so that the name of the attachment stays
-            attachmentData.add_header("Content-Disposition", "attachment", filename=attachmentFileName)
+            attachmentData.add_header(
+                "Content-Disposition", "attachment", filename=attachmentFileName
+            )
             encode_base64(attachmentData)  # Encode the attachmentData
             message.attach(attachmentData)
 
         encoded_message = base64_urlsafe_encode(message.as_bytes()).decode()
-        create_message = {
-            "raw": encoded_message
-        }
+        create_message = {"raw": encoded_message}
         return create_message
 
     def send_message(self) -> None:
         for mailReceiver in self.mailReceivers:
             message = self._build_message(mailReceiver)
             try:
-                self.service.users().messages().send(userId="me", body=message).execute()
+                self.service.users().messages().send(
+                    userId="me", body=message
+                ).execute()
             except GoogleHttpError as error:
                 raise Exception(error.reason)
