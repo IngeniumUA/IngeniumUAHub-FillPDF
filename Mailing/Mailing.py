@@ -50,6 +50,7 @@ class MailingClass:
         self.serviceFilePath = service_file_path
 
         if content_type != "plain" or content_type != "html":
+            print(content_type)
             raise Exception("hekkie")
 
         self.contentType = content_type
