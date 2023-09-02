@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="Mailing",
-    version="3.1",
+    version="3.2",
     description="Implements the Gmail API to send mails",
     author="Yorben Joosen",
     author_email="webmaster@ingeniumua.be",
