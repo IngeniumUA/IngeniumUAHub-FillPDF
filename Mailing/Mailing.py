@@ -1,5 +1,4 @@
 import base64
-from base64 import urlsafe_b64encode as base64_urlsafe_encode
 from mimetypes import guess_type as mimetypes_guess_type
 from os import path as os_path
 from email.encoders import encode_base64
@@ -82,7 +81,7 @@ class MailingClass:
             if not isinstance(attachment, (str, bytes)):
                 raise Exception("Attachment is not a string or bytes.")
 
-            if attachment is str:
+            if isinstance(attachment, str):
                 if not os_path.exists(attachment):
                     raise Exception("Service account json path does not exist")
                 attachmentPath = (
@@ -107,7 +106,7 @@ class MailingClass:
                 attachmentData = attachment
             message.attach(attachmentData)
 
-        encoded_message = base64_urlsafe_encode(message.as_bytes()).decode()
+        encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
         create_message = {"raw": encoded_message}
         return create_message
 
