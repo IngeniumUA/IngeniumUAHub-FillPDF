@@ -1,3 +1,4 @@
+import base64
 from base64 import urlsafe_b64encode as base64_urlsafe_encode
 from mimetypes import guess_type as mimetypes_guess_type
 from os import path as os_path
@@ -22,7 +23,7 @@ class MailingClass:
         mail_content: str,
         mail_sender: str,
         service_file_path: str,
-        attachments: list[str | bytes] = None,
+        attachments: list[str | base64] = None,
         content_type: str = "plain",
     ) -> None:
         """
@@ -78,6 +79,8 @@ class MailingClass:
 
         # Loop over the list of attachments
         for attachment in self.attachments:
+            if attachment != str and attachment != base64:
+                raise Exception("Attachment not encoded as string or base64.")
             if attachment is str:
                 attachmentPath = (
                     attachment  # Save the path, because this is needed later on
