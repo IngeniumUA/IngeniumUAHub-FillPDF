@@ -104,7 +104,8 @@ class MailingClass:
                 )
                 encode_base64(attachmentData)  # Encode the attachmentData
             else:
-                attachmentData = base64.b64encode(attachment)
+                attachmentData = MIMEBase("image", "plain")
+                attachmentData.set_payload(attachment)
             message.attach(attachmentData)
 
         encoded_message = base64_urlsafe_encode(message.as_bytes()).decode()
