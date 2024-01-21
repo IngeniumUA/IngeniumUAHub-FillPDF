@@ -102,10 +102,9 @@ class MailingClass:
                 attachmentData.add_header(
                     "Content-Disposition", "attachment", filename=attachmentFileName
                 )
+                encode_base64(attachmentData)  # Encode the attachmentData
             else:
                 attachmentData = attachment
-
-            encode_base64(attachmentData)  # Encode the attachmentData
             message.attach(attachmentData)
 
         encoded_message = base64_urlsafe_encode(message.as_bytes()).decode()
