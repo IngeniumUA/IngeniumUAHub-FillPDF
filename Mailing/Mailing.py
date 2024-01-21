@@ -23,7 +23,7 @@ class MailingClass:
         mail_content: str,
         mail_sender: str,
         service_file_path: str,
-        attachments: list[str | base64] = None,
+        attachments: list[str | bytes] = None,
         content_type: str = "plain",
     ) -> None:
         """
@@ -79,9 +79,12 @@ class MailingClass:
 
         # Loop over the list of attachments
         for attachment in self.attachments:
-            if attachment != str and attachment != base64:
-                raise Exception("Attachment not encoded as string or base64.")
+            if not isinstance(attachment, (str, bytes)):
+                raise Exception("Attachment is not a string or bytes.")
+
             if attachment is str:
+                if not os_path.exists(attachment):
+                    raise Exception("Service account json path does not exist")
                 attachmentPath = (
                     attachment  # Save the path, because this is needed later on
                 )
@@ -99,9 +102,10 @@ class MailingClass:
                 attachmentData.add_header(
                     "Content-Disposition", "attachment", filename=attachmentFileName
                 )
-                encode_base64(attachmentData)  # Encode the attachmentData
             else:
                 attachmentData = attachment
+
+            encode_base64(attachmentData)  # Encode the attachmentData
             message.attach(attachmentData)
 
         encoded_message = base64_urlsafe_encode(message.as_bytes()).decode()
