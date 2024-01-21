@@ -106,8 +106,8 @@ class MailingClass:
                 attachmentData = attachment
             message.attach(attachmentData)
 
-        encoded_message = base64.urlsafe_b64encode(message.as_bytes())
-        create_message = {"raw": encoded_message}
+        #encoded_message = base64.urlsafe_b64encode(message.as_bytes())
+        create_message = {"raw": message}
         return create_message
 
     def send_message(self) -> None:
