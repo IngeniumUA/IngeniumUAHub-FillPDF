@@ -14,9 +14,12 @@ from googleapiclient.errors import HttpError as GoogleHttpError
 
 
 class AttachmentsDictionary(TypedDict):
+    """
+    A dictionary that stores all the attachments, also used for type hinting.
+    MIME types: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+    """
     attachment: str | bytes
     filename: str
-    type: str
     mime_maintype: str | None
     mime_subtype: str | None
 
@@ -110,7 +113,9 @@ class MailingClass:
                 attachmentData = MIMEBase(attachmentDictionary["mime_maintype"], attachmentDictionary["mime_subtype"])
                 attachmentData.set_payload(attachmentDictionary["attachment"])
                 encode_base64(attachmentData)
-                attachmentData.add_header("Content-Disposition", "attachment",filename=attachmentDictionary["filename"] + "." + attachmentDictionary["mime_subtype"])
+                attachmentData.add_header("Content-Disposition", "attachment",
+                                          filename=attachmentDictionary["filename"] + "." + attachmentDictionary[
+                                              "mime_subtype"])
             message.attach(attachmentData)
 
         encoded_message = base64_urlsafe_encode(message.as_bytes()).decode()
