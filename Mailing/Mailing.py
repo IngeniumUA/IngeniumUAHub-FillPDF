@@ -22,7 +22,7 @@ class MailingClass:
         mail_content: str,
         mail_sender: str,
         service_file_path: str,
-        attachments: list[str] = None,
+        attachments: list[str | bytes] = None,
         content_type: str = "plain",
     ) -> None:
         """
@@ -78,24 +78,27 @@ class MailingClass:
 
         # Loop over the list of attachments
         for attachment in self.attachments:
-            attachmentPath = (
-                attachment  # Save the path, because this is needed later on
-            )
-            attachmentFileName = os_path.basename(attachment)
-            fileType, encoding = mimetypes_guess_type(attachmentFileName)
-            mainType, subType = fileType.split("/")
-            attachmentData = MIMEBase(mainType, subType)
+            if attachment is str:
+                attachmentPath = (
+                    attachment  # Save the path, because this is needed later on
+                )
+                attachmentFileName = os_path.basename(attachment)
+                fileType, encoding = mimetypes_guess_type(attachmentFileName)
+                mainType, subType = fileType.split("/")
+                attachmentData = MIMEBase(mainType, subType)
 
-            # Open the attachment, read it and write its content into attachmentData
-            with open(
-                attachmentPath, "rb"
-            ) as file:  # "rb" = read, binary mode (e.g. images)
-                attachmentData.set_payload(file.read())
-            # Add header to attachmentData so that the name of the attachment stays
-            attachmentData.add_header(
-                "Content-Disposition", "attachment", filename=attachmentFileName
-            )
-            encode_base64(attachmentData)  # Encode the attachmentData
+                # Open the attachment, read it and write its content into attachmentData
+                with open(
+                    attachmentPath, "rb"
+                ) as file:  # "rb" = read, binary mode (e.g. images)
+                    attachmentData.set_payload(file.read())
+                # Add header to attachmentData so that the name of the attachment stays
+                attachmentData.add_header(
+                    "Content-Disposition", "attachment", filename=attachmentFileName
+                )
+                encode_base64(attachmentData)  # Encode the attachmentData
+            else:
+                attachmentData = attachment
             message.attach(attachmentData)
 
         encoded_message = base64_urlsafe_encode(message.as_bytes()).decode()
