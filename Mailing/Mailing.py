@@ -107,7 +107,7 @@ class MailingClass:
                 attachmentData = attachment
             message.attach(attachmentData)
 
-        encoded_message = base64_urlsafe_encode(message.as_bytes()).decode()
+        encoded_message = message.as_string()
         create_message = {"raw": encoded_message}
         return create_message
 
