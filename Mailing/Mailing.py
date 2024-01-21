@@ -6,9 +6,19 @@ from email.encoders import encode_base64
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from typing import TypedDict
+
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError as GoogleHttpError
+
+
+class AttachmentsDictionary(TypedDict):
+    attachment: str | bytes
+    filename: str
+    type: str
+    mime_maintype: str | None
+    mime_subtype: str | None
 
 
 class MailingClass:
@@ -17,14 +27,14 @@ class MailingClass:
     """
 
     def __init__(
-        self,
-        mail_receivers: list[str],
-        mail_subject: str,
-        mail_content: str,
-        mail_sender: str,
-        service_file_path: str,
-        attachments: list[str | bytes] = None,
-        content_type: str = "plain",
+            self,
+            mail_receivers: list[str],
+            mail_subject: str,
+            mail_content: str,
+            mail_sender: str,
+            service_file_path: str,
+            attachments: list[AttachmentsDictionary] = None,
+            content_type: str = "plain",
     ) -> None:
         """
         :param mail_receivers: Receivers
@@ -78,36 +88,29 @@ class MailingClass:
         message.attach(mailContent)
 
         # Loop over the list of attachments
-        for attachment in self.attachments:
-            if not isinstance(attachment, (str, bytes)):
-                raise Exception("Attachment is not a string or bytes.")
+        for attachmentDictionary in self.attachments:
+            if not isinstance(attachmentDictionary["attachment"], (str, bytes)):
+                raise Exception("Attachment is not encoded as a string or bytes.")
 
-            if isinstance(attachment, str):
-                if not os_path.exists(attachment):
-                    raise Exception("Service account json path does not exist")
-                attachmentPath = (
-                    attachment  # Save the path, because this is needed later on
-                )
-                attachmentFileName = os_path.basename(attachment)
-                fileType, encoding = mimetypes_guess_type(attachmentFileName)
+            if isinstance(attachmentDictionary["attachment"], str):
+                # Save the path, because this is needed later on
+                attachmentPath = attachmentDictionary["attachment"]
+                fileType, encoding = mimetypes_guess_type(attachmentDictionary["filename"])
                 mainType, subType = fileType.split("/")
                 attachmentData = MIMEBase(mainType, subType)
 
                 # Open the attachment, read it and write its content into attachmentData
-                with open(
-                    attachmentPath, "rb"
-                ) as file:  # "rb" = read, binary mode (e.g. images)
+                with open(attachmentPath, 'rb') as file:  # "rb" = read, binary mode (e.g. images)
                     attachmentData.set_payload(file.read())
                 # Add header to attachmentData so that the name of the attachment stays
-                attachmentData.add_header(
-                    "Content-Disposition", "attachment", filename=attachmentFileName
-                )
-                encode_base64(attachmentData)  # Encode the attachmentData
+                attachmentData.add_header("Content-Disposition", "attachment",
+                                          filename=attachmentDictionary["filename"])
+                encode_base64(attachmentData)  # Encode the attachmentData]
             else:
-                attachmentData = MIMEBase("application", "octet-stream")
-                attachmentData.set_payload(attachment)
+                attachmentData = MIMEBase(attachmentDictionary["mime_maintype"], attachmentDictionary["mime_subtype"])
+                attachmentData.set_payload(attachmentDictionary["attachment"])
                 encode_base64(attachmentData)
-                attachmentData.add_header("Content-Disposition", "attachment", filename="test.PNG")
+                attachmentData.add_header("Content-Disposition", "attachment",filename=attachmentDictionary["filename"] + "." + attachmentDictionary["mime_subtype"])
             message.attach(attachmentData)
 
         encoded_message = base64_urlsafe_encode(message.as_bytes()).decode()
