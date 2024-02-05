@@ -1,3 +1,4 @@
+import math
 import os
 from decimal import Decimal
 from typing import TypedDict
@@ -73,6 +74,11 @@ class FactuurGegevens(TypedDict):
     btw: Decimal
 
 
+def round_half_up(number, decimals=2):
+    multiplier = 10 ** decimals
+    return math.floor(number * multiplier + 0.5) / multiplier
+
+
 class FillOnkostennota:
     def __init__(self) -> None:
         self.boekhoudpost_vervoer = "615000"
@@ -101,7 +107,7 @@ class FillOnkostennota:
         if vervoersonkosten_vergoeding is not None:
             writer.update_page_form_field_values(
                 writer.pages[0],
-                {"Vervoersonkosten": str(round(vervoersonkosten_vergoeding, 4))},
+                {"Vervoersonkosten": str(round_half_up(vervoersonkosten_vergoeding, 4))},
                 auto_regenerate=False,
             )
 
@@ -150,11 +156,11 @@ class FillOnkostennota:
                 writer.update_page_form_field_values(
                     writer.pages[0],
                     {boekhoudpost_field: onkost["boekhoudpost"], beschrijving_field: onkost["beschrijving"],
-                     prijs_field: str(round(eindprijs, 2))},
+                     prijs_field: str(round_half_up(eindprijs, 2))},
                     auto_regenerate=False,
                 )
                 i += 1
-                totaal += round(eindprijs, 2)
+                totaal += round_half_up(eindprijs, 2)
 
             writer.update_page_form_field_values(
                 writer.pages[0],
@@ -259,21 +265,22 @@ class Factuur:
                 # Prijs berekening
                 totaal_product = product["prijs"] * product["aantal"]
                 totaal_exclusief += totaal_product
-                totaal_product = totaal_product * (1 + product["btw"]/100)
+                totaal_product = totaal_product * (1 + product["btw"] / 100)
                 totaal_inclusief += totaal_product
 
                 writer.update_page_form_field_values(
                     writer.pages[0],
                     {boekhoudpost_field: product["boekhoudpost"], beschrijving_field: product["beschrijving"],
                      prijs_field: product["prijs"], aantal_field: product["aantal"], btw_field: product["btw"],
-                     totaal_field: str(totaal_product)},
+                     totaal_field: str(round_half_up(totaal_product, 2))},
                     auto_regenerate=False,
                 )
                 i += 1
 
             writer.update_page_form_field_values(
                 writer.pages[0],
-                {"TotaalExclusief": str(round(totaal_exclusief, 2)), "TotaalInclusief": str(round(totaal_inclusief, 2))},
+                {"TotaalExclusief": str(round_half_up(totaal_exclusief, 2)),
+                 "TotaalInclusief": str(round_half_up(totaal_inclusief, 2))},
                 auto_regenerate=False,
             )
 
