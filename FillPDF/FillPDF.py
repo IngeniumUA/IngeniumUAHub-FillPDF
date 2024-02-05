@@ -18,12 +18,15 @@ class OnkostennotaGegevensDictionary(TypedDict):
 
 
 class FillPDF:
+    def __init__(self) -> None:
+        self.vervoersonkosten_vergoeding = 0.42
+        self.boekhoudpost_vervoer = "615000"
+        self.max_onkosten = 16
+
     def fillOnkostennota(self, savepath: str, volgnummer: str = None, gegevens: OnkostennotaGegevensDictionary = None,
                          onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,) -> None:
         # Standaard variabelen, worden uit PDF gehaald
-        vervoersonkosten_vergoeding = 0.42
-        boekhoudpost_vervoer = "615000"
-        max_onkosten = 16
+
 
         reader = PdfReader("Templates/Onkostennota.pdf")
         writer = PdfWriter()
@@ -56,7 +59,7 @@ class FillPDF:
         i = 1
         totaal = 0
         if onkosten is not None:
-            if len(onkosten) > max_onkosten:
+            if len(onkosten) > self.max_onkosten:
                 raise Exception("Er zijn meer onkosten dan in de nota passen.")
             for onkost in onkosten:
                 # Field names
@@ -64,8 +67,8 @@ class FillPDF:
                 beschrijving_field = "Beschrijving" + str(i)
                 prijs_field = "Prijs" + str(i)
 
-                if onkost["boekhoudpost"] == boekhoudpost_vervoer:
-                    eindprijs = onkost["prijs_of_km"] * vervoersonkosten_vergoeding
+                if onkost["boekhoudpost"] == self.boekhoudpost_vervoer:
+                    eindprijs = onkost["prijs_of_km"] * self.vervoersonkosten_vergoeding
                 else:
                     eindprijs = onkost["prijs_of_km"]
                 totaal += eindprijs
