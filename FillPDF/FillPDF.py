@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import TypedDict
 
 from pypdf import PdfReader, PdfWriter
@@ -6,7 +7,7 @@ from pypdf import PdfReader, PdfWriter
 class OnkostennotaOnkostenDictionary(TypedDict):
     boekhoudpost: str
     beschrijving: str
-    prijs_of_km: int
+    prijs_of_km: Decimal
 
 
 class OnkostennotaGegevensDictionary(TypedDict):
