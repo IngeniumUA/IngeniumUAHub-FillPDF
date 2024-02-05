@@ -240,7 +240,6 @@ class Factuur:
                     auto_regenerate=False,
                 )
 
-
         if producten is not None:
             if len(producten) > self.max_producten:
                 raise Exception("Er zijn meer producten dan in de factuur passen.")
@@ -269,6 +268,12 @@ class Factuur:
                      totaal_field: totaal_product},
                     auto_regenerate=False,
                 )
+
+            writer.update_page_form_field_values(
+                writer.pages[0],
+                {"TotaalExclusief": str(round(totaal_exclusief, 2)), "TotaalInclusief": str(round(totaal_inclusief, 2))},
+                auto_regenerate=False,
+            )
 
         with open(savepath, "wb") as output_stream:
             writer.write(output_stream)
