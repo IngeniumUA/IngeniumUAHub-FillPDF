@@ -20,7 +20,7 @@ class OnkostennotaGegevensDictionary(TypedDict):
 
 class FillPDF:
     def __init__(self) -> None:
-        self.vervoersonkosten_vergoeding = 0.42
+        self.vervoersonkosten_vergoeding = Decimal(0.42)
         self.boekhoudpost_vervoer = "615000"
         self.max_onkosten = 16
 
