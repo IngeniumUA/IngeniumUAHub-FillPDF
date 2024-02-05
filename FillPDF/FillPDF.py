@@ -259,7 +259,7 @@ class Factuur:
                 # Prijs berekening
                 totaal_product = round((product["prijs"] * product["aantal"] * (1 + product["btw"]/100)), 2)
                 totaal_inclusief += totaal_product
-                totaal_exclusief += (round(totaal_product / (1 + product["btw"]), 2))
+                totaal_exclusief += (round(totaal_product / (1 + product["btw"]/100), 2))
 
                 writer.update_page_form_field_values(
                     writer.pages[0],
