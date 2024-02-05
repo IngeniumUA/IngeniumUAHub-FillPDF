@@ -1,18 +1,12 @@
 from setuptools import setup
 
 setup(
-    name="Mailing",
-    version="22.0",
-    description="Implements the Gmail API to send mails",
+    name="FillPDF",
+    version="1.0",
+    description="Used to automatically fill PDF's",
     author="Yorben Joosen",
     author_email="webmaster@ingeniumua.be",
-    packages=["Mailing"],  # same as name
+    packages=["FillPDF"],  # same as name
     install_requires=[
-        "google",
-        "google-api-core",
-        "google-api-python-client",
-        "google-auth",
-        "google-auth-httplib2",
-        "googleapis-common-protos",
     ],  # external packages as dependencies
 )
