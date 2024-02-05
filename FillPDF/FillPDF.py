@@ -257,7 +257,7 @@ class Factuur:
                 totaal_field = "Totaal" + str(i)
 
                 # Prijs berekening
-                totaal_product = round((product["prijs"] * product["aantal"] * (1 + product["btw"])), 2)
+                totaal_product = round((product["prijs"] * product["aantal"] * (1 + product["btw"]/100)), 2)
                 totaal_inclusief += totaal_product
                 totaal_exclusief += (round(totaal_product / (1 + product["btw"]), 2))
 
