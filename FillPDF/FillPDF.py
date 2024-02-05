@@ -1,3 +1,4 @@
+import os
 from decimal import Decimal
 from typing import TypedDict
 
@@ -27,8 +28,8 @@ class FillPDF:
     def fillOnkostennota(self, savepath: str, volgnummer: str = None, gegevens: OnkostennotaGegevensDictionary = None,
                          onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None, ) -> None:
         # Standaard variabelen, worden uit PDF gehaald
-
-        reader = PdfReader("FillPDF/Templates/Onkostennota.pdf")
+        template_dir = os.path.join(os.path.dirname(__file__), "templates")
+        reader = PdfReader(os.path.join(template_dir, "Onkostennota.pdf"))
         writer = PdfWriter()
         writer.append(reader)
 
