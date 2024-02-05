@@ -25,11 +25,10 @@ class FillPDF:
         self.max_onkosten = 16
 
     def fillOnkostennota(self, savepath: str, volgnummer: str = None, gegevens: OnkostennotaGegevensDictionary = None,
-                         onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,) -> None:
+                         onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None, ) -> None:
         # Standaard variabelen, worden uit PDF gehaald
 
-
-        reader = PdfReader("Templates/Onkostennota.pdf")
+        reader = PdfReader("/Templates/Onkostennota.pdf")
         writer = PdfWriter()
         writer.append(reader)
 
