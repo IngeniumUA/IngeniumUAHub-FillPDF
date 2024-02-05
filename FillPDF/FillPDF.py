@@ -22,7 +22,7 @@ class FillPDF:
                          onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,) -> None:
         # Standaard variabelen, worden uit PDF gehaald
         vervoersonkosten_vergoeding = 0.42
-        boekhoudpost_vervoer = 615000
+        boekhoudpost_vervoer = "615000"
         max_onkosten = 16
 
         reader = PdfReader("Templates/Onkostennota.pdf")
