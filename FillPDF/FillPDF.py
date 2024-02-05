@@ -36,7 +36,7 @@ class FillPDF:
         # Vervoersvergoeding invullen
         writer.update_page_form_field_values(
             writer.pages[0],
-            {"Vervoersonkosten": str(self.vervoersonkosten_vergoeding)},
+            {"Vervoersonkosten": str(round(self.vervoersonkosten_vergoeding, 2))},
             auto_regenerate=False,
         )
 
@@ -79,8 +79,6 @@ class FillPDF:
                     eindprijs = onkost["prijs_of_km"] * self.vervoersonkosten_vergoeding
                 else:
                     eindprijs = onkost["prijs_of_km"]
-                totaal += eindprijs
-
                 writer.update_page_form_field_values(
                     writer.pages[0],
                     {boekhoudpost_field: onkost["boekhoudpost"], beschrijving_field: onkost["beschrijving"],
@@ -88,6 +86,7 @@ class FillPDF:
                     auto_regenerate=False,
                 )
                 i += 1
+                totaal += round(eindprijs, 2)
 
             writer.update_page_form_field_values(
                 writer.pages[0],
