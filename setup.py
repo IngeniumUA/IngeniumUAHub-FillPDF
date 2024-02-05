@@ -1,3 +1,4 @@
+import pypdf
 from setuptools import setup
 
 setup(
@@ -8,5 +9,6 @@ setup(
     author_email="webmaster@ingeniumua.be",
     packages=["FillPDF"],  # same as name
     install_requires=[
+        pypdf
     ],  # external packages as dependencies
 )
