@@ -35,16 +35,52 @@ class OnkostennotaGegevensDictionary(TypedDict):
     datum: str
 
 
-class FillPDF:
+class FactuurNaar(TypedDict):
+    """
+    Dictionary die alle gegevens van de factuurontvanger opslaat, wordt ook gebruikt voor type hinting.\
+
+    :param begunstigde: Begunstigde van de factuur.
+    :param departement: Departement van de begunstigde.
+    :param adres1: Straat + huisnummer van de begunstigde
+    :param adres2: Gemeente + postcode van de begunstigde.
+    :param btw: Eventueel BTW-nummer van de begunstigde.
+    :param ordernummer: Eventueel ordernummer.
+    """
+    begunstigde: str
+    departement: str
+    adres1: str
+    adres2: str
+    btw: str
+    ordernummer: str
+
+
+class FactuurGegevens(TypedDict):
+    """
+    Dictionary die de gegevens van het verkochte product opslaat, wordt ook gebruikt voor type hinting.
+
+    :param boekhoudpost: De boekhoudpost waar het product bij hoort.
+    :param beschrijving: Beschrijving van het product
+    :param prijs: Prijs voor 1 stuk van het product.
+    :param aantal: Aantal van het product dat verkocht wordt.
+    :param btw: BTW die op het product wordt gerekend.
+    """
+    boekhoudpost: str
+    beschrijving: str
+    prijs: Decimal
+    aantal: Decimal
+    btw: Decimal
+
+
+class FillOnkostennota:
     def __init__(self) -> None:
         self.boekhoudpost_vervoer = "615000"
         self.max_onkosten = 16
 
-    def fillOnkostennota(self, savepath: str, volgnummer: str = None, gegevens: OnkostennotaGegevensDictionary = None,
-                         onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,
-                         vervoersonkosten_vergoeding: Decimal = None) -> None:
+    def fill(self, savepath: str, volgnummer: str = None, gegevens: OnkostennotaGegevensDictionary = None,
+             onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,
+             vervoersonkosten_vergoeding: Decimal = None) -> None:
         """
-        Functie die automatisch de onkostennota invult.
+        Functie die automatisch de onkostennota template invult.
 
         :param savepath: Waar de onkostennota op te slaan.
         :param volgnummer: Volgnummer van de onkostennota.
@@ -60,11 +96,12 @@ class FillPDF:
         writer.append(reader)
 
         # Vervoersvergoeding invullen
-        writer.update_page_form_field_values(
-            writer.pages[0],
-            {"Vervoersonkosten": str(round(vervoersonkosten_vergoeding, 4))},
-            auto_regenerate=False,
-        )
+        if vervoersonkosten_vergoeding is not None:
+            writer.update_page_form_field_values(
+                writer.pages[0],
+                {"Vervoersonkosten": str(round(vervoersonkosten_vergoeding, 4))},
+                auto_regenerate=False,
+            )
 
         # Volgnummer invullen
         if volgnummer is not None:
@@ -90,11 +127,12 @@ class FillPDF:
             )
 
         # Onkosten invullen
-        i = 1
-        totaal = Decimal(0)
+
         if onkosten is not None:
             if len(onkosten) > self.max_onkosten:
                 raise Exception("Er zijn meer onkosten dan in de nota passen.")
+            i = 1
+            totaal = Decimal(0)
             for onkost in onkosten:
                 # Field names
                 boekhoudpost_field = "Boekhoudpost" + str(i)
@@ -121,6 +159,95 @@ class FillPDF:
                 {"Totaal": str(totaal)},
                 auto_regenerate=False,
             )
+
+        with open(savepath, "wb") as output_stream:
+            writer.write(output_stream)
+
+
+class Factuur:
+    def __init__(self) -> None:
+        self.max_producten = 10
+
+    def fill(self, savepath: str, volgnummer: str = None, factuurdatum: str = None, naar: FactuurNaar = None,
+             producten: list[
+                 FactuurGegevens] = None, dagen: str = None) -> None:
+        """
+        Functie die automatisch de factuur template invult.
+
+        :param savepath: Waar de factuur op te slaan.
+        :param volgnummer: Volgnummer van de factuur.
+        :param factuurdatum: Datum dat de factuur is opgesteld.
+        :param naar: Gegevens van de factuurontvanger.
+        :param producten: Lijst van verkochte producten.
+        :param dagen: Aantal dagen dat de factuur binnen betaald moet worden.
+        """
+        # Standaard variabelen, worden uit PDF gehaald
+        template_dir = os.path.join(os.path.dirname(__file__), "templates")
+        reader = PdfReader(os.path.join(template_dir, "Onkostennota.pdf"))
+        writer = PdfWriter()
+        writer.append(reader)
+
+        # Volgnummer invullen
+        if volgnummer is not None:
+            writer.update_page_form_field_values(
+                writer.pages[0],
+                {"Volgnummer": volgnummer},
+                auto_regenerate=False,
+            )
+
+        # Factuurdatum invullen
+        if factuurdatum is not None:
+            writer.update_page_form_field_values(
+                writer.pages[0],
+                {"Factuurdatum": volgnummer},
+                auto_regenerate=False,
+            )
+
+        # Dagen invullen
+        if dagen is not None:
+            writer.update_page_form_field_values(
+                writer.pages[0],
+                {"Betaaldagen": dagen},
+                auto_regenerate=False,
+            )
+
+        # Naar invullen
+        if naar is not None:
+            writer.update_page_form_field_values(
+                writer.pages[0],
+                {"Begunstigde": naar["begunstigde"], "Departement": naar["departement"], "Adres1": naar["adres1"],
+                 "Adres2": naar["adres2"], "BTW": naar["btw"], "OrderNummer": naar["ordernummer"]},
+                auto_regenerate=False,
+            )
+
+        if producten is not None:
+            if len(producten) > self.max_producten:
+                raise Exception("Er zijn meer producten dan in de factuur passen.")
+            i = 1
+            totaal_inclusief = Decimal(0)
+            totaal_exclusief = Decimal(0)
+
+            for product in producten:
+                # Field names
+                boekhoudpost_field = "Boekhoudpost" + str(i)
+                beschrijving_field = "Beschrijving" + str(i)
+                prijs_field = "Prijs" + str(i)
+                aantal_field = "Aantal" + str(i)
+                btw_field = "BTW" + str(i)
+                totaal_field = "Totaal" + str(i)
+
+                # Prijs berekening
+                totaal_product = round(product["prijs"] * product["aantal"] * (1 + product["btw"]), 2)
+                totaal_inclusief += totaal_product
+                totaal_exclusief += round(totaal_product / (1 + product["btw"]), 2)
+
+                writer.update_page_form_field_values(
+                    writer.pages[0],
+                    {boekhoudpost_field: product["boekhoudpost"], beschrijving_field: product["beschrijving"],
+                     prijs_field: product["prijs"], aantal_field: product["aantal"], btw_field: product["btw"],
+                     totaal_field: totaal_product},
+                    auto_regenerate=False,
+                )
 
         with open(savepath, "wb") as output_stream:
             writer.write(output_stream)
