@@ -33,6 +33,13 @@ class FillPDF:
         writer = PdfWriter()
         writer.append(reader)
 
+        # Vervoersvergoeding invullen
+        writer.update_page_form_field_values(
+            writer.pages[0],
+            {"Vervoersonkosten": str(self.vervoersonkosten_vergoeding)},
+            auto_regenerate=False,
+        )
+
         # Volgnummer invullen
         if volgnummer is not None:
             writer.update_page_form_field_values(
@@ -58,7 +65,7 @@ class FillPDF:
 
         # Onkosten invullen
         i = 1
-        totaal = 0
+        totaal = Decimal(0)
         if onkosten is not None:
             if len(onkosten) > self.max_onkosten:
                 raise Exception("Er zijn meer onkosten dan in de nota passen.")
@@ -84,7 +91,7 @@ class FillPDF:
 
             writer.update_page_form_field_values(
                 writer.pages[0],
-                {"Totaal": totaal},
+                {"Totaal": str(totaal)},
                 auto_regenerate=False,
             )
 
