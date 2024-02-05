@@ -28,7 +28,7 @@ class FillPDF:
                          onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None, ) -> None:
         # Standaard variabelen, worden uit PDF gehaald
 
-        reader = PdfReader("Onkostennota.pdf")
+        reader = PdfReader("Templates/Onkostennota.pdf")
         writer = PdfWriter()
         writer.append(reader)
 
