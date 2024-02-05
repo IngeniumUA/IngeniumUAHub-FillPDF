@@ -18,9 +18,8 @@ class OnkostennotaGegevensDictionary(TypedDict):
 
 
 class FillPDF:
-    def fillOnkostennota(self, volgnummer: str | None, gegevens: OnkostennotaGegevensDictionary | None,
-                         onkosten: list[OnkostennotaOnkostenDictionary] | None, betaaldatum: str | None,
-                         savepath: str) -> None:
+    def fillOnkostennota(self, savepath: str, volgnummer: str = None, gegevens: OnkostennotaGegevensDictionary = None,
+                         onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,) -> None:
         # Standaard variabelen, worden uit PDF gehaald
         vervoersonkosten_vergoeding = 0.42
         boekhoudpost_vervoer = 615000
