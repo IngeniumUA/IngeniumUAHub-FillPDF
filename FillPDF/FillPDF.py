@@ -18,7 +18,7 @@ class OnkostennotaGegevensDictionary(TypedDict):
 
 
 class FillPDF:
-    def fillOnkostennota(volgnummer: str | None, gegevens: OnkostennotaGegevensDictionary | None,
+    def fillOnkostennota(self, volgnummer: str | None, gegevens: OnkostennotaGegevensDictionary | None,
                          onkosten: list[OnkostennotaOnkostenDictionary] | None, betaaldatum: str | None,
                          savepath: str) -> None:
         # Standaard variabelen, worden uit PDF gehaald
@@ -41,7 +41,7 @@ class FillPDF:
         if betaaldatum is not None:
             writer.update_page_form_field_values(
                 writer.pages[0],
-                {"DatumVoldaan": volgnummer},
+                {"DatumVoldaan": betaaldatum},
                 auto_regenerate=False,
             )
         # Gegevens invullen
