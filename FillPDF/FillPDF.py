@@ -5,6 +5,8 @@ from typing import TypedDict
 from pypdf import PdfReader, PdfWriter
 
 
+# TODO make it so that pdf has to be given, otherwise updates cant be made
+
 class OnkostennotaOnkostenDictionary(TypedDict):
     """
     Dictionary die alle gegevens van de onkost opslaat, wordt ook gebruikt voor type hinting.
@@ -47,11 +49,11 @@ class FactuurNaar(TypedDict):
     :param ordernummer: Eventueel ordernummer.
     """
     begunstigde: str
-    departement: str
+    departement: str | None
     adres1: str
     adres2: str
-    btw: str
-    ordernummer: str
+    btw: str | None
+    ordernummer: str | None
 
 
 class FactuurGegevens(TypedDict):
@@ -215,10 +217,29 @@ class Factuur:
         if naar is not None:
             writer.update_page_form_field_values(
                 writer.pages[0],
-                {"Begunstigde": naar["begunstigde"], "Departement": naar["departement"], "Adres1": naar["adres1"],
-                 "Adres2": naar["adres2"], "BTW": naar["btw"], "OrderNummer": naar["ordernummer"]},
+                {"Begunstigde": naar["begunstigde"], "Adres1": naar["adres1"],
+                 "Adres2": naar["adres2"]},
                 auto_regenerate=False,
             )
+            if naar["btw"] is not None:
+                writer.update_page_form_field_values(
+                    writer.pages[0],
+                    {"BTW": naar["btw"]},
+                    auto_regenerate=False,
+                )
+            if naar["ordernummer"] is not None:
+                writer.update_page_form_field_values(
+                    writer.pages[0],
+                    {"OrderNummer": naar["ordernummer"]},
+                    auto_regenerate=False,
+                )
+            if naar["begunstigde"] is not None:
+                writer.update_page_form_field_values(
+                    writer.pages[0],
+                    {"Departement": naar["departement"]},
+                    auto_regenerate=False,
+                )
+
 
         if producten is not None:
             if len(producten) > self.max_producten:
