@@ -183,7 +183,7 @@ class Factuur:
         """
         # Standaard variabelen, worden uit PDF gehaald
         template_dir = os.path.join(os.path.dirname(__file__), "templates")
-        reader = PdfReader(os.path.join(template_dir, "Onkostennota.pdf"))
+        reader = PdfReader(os.path.join(template_dir, "Factuur.pdf"))
         writer = PdfWriter()
         writer.append(reader)
 
