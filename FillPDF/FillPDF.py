@@ -259,15 +259,16 @@ class Factuur:
                 # Prijs berekening
                 totaal_product = round(product["prijs"] * product["aantal"] * (1 + product["btw"]), 2)
                 totaal_inclusief += totaal_product
-                totaal_exclusief += round(totaal_product / (1 + product["btw"]), 2)
+                totaal_exclusief += (round(totaal_product / (1 + product["btw"]), 2))
 
                 writer.update_page_form_field_values(
                     writer.pages[0],
                     {boekhoudpost_field: product["boekhoudpost"], beschrijving_field: product["beschrijving"],
                      prijs_field: product["prijs"], aantal_field: product["aantal"], btw_field: product["btw"],
-                     totaal_field: totaal_product},
+                     totaal_field: str(totaal_product)},
                     auto_regenerate=False,
                 )
+                i += 1
 
             writer.update_page_form_field_values(
                 writer.pages[0],
