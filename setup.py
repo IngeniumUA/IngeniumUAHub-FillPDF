@@ -1,12 +1,13 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name="FillPDF",
-    version="9.0",
+    version="10.0",
     description="Used to automatically fill PDF's",
     author="Yorben Joosen",
     author_email="webmaster@ingeniumua.be",
-    packages=["FillPDF"],  # same as name
+    packages=find_packages(),  # same as name
+    package_data={'FillPDF': ["Templates/*"]},
     install_requires=[
         "pypdf",
     ],  # external packages as dependencies
