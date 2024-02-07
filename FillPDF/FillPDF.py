@@ -6,7 +6,7 @@ from typing import TypedDict, IO, Any
 from PIL import Image
 from pypdf import PdfReader, PdfWriter
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import A4
 
 
 class OnkostennotaOnkostenDictionary(TypedDict):
