@@ -117,7 +117,7 @@ class FillOnkostennota:
         self.max_onkosten = 16
         self.pdf_signature = b"%PDF-"
 
-    def fill(self, filedata: IO[io.BytesIO], savepath: str, volgnummer: str = None,
+    def fill(self, filedata: io.BytesIO, savepath: str, volgnummer: str = None,
              gegevens: OnkostennotaGegevensDictionary = None,
              onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,
              vervoersonkosten_vergoeding: Decimal = None, attachmentsdata: list[io.BytesIO] = None) -> None:
