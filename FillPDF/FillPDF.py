@@ -1,9 +1,12 @@
+import io
 import math
 import img2pdf
 from decimal import Decimal
 from typing import TypedDict, IO, Any
 from PIL import Image
 from pypdf import PdfReader, PdfWriter
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 
 
 class OnkostennotaOnkostenDictionary(TypedDict):
@@ -114,7 +117,6 @@ class FillOnkostennota:
         self.max_onkosten = 16
         self.pdf_signature = b"%PDF-"
 
-
     def fill(self, filedata: IO[Any], savepath: str, volgnummer: str = None,
              gegevens: OnkostennotaGegevensDictionary = None,
              onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,
@@ -207,8 +209,17 @@ class FillOnkostennota:
                     writer.append(fileobj=attachmentdata)
                 else:
                     image = Image.open(attachmentdata)
-                    pdf_bytes = img2pdf.convert(image)
-                    writer.append(fileobj=pdf_bytes)
+                    pdf_buffer = io.BytesIO()
+                    pdf = canvas.Canvas(pdf_buffer, pagesize=letter)
+                    width, height = letter
+                    aspect_ratio = width / float(image.width)
+                    pdf.drawInlineImage(image, 0, 0, width, height * aspect_ratio)
+                    pdf.save()
+                    pdf_buffer.seek(0)
+                    attachmentdata.write(pdf_buffer.read())
+                    pdf_buffer.close()
+                    writer.append(fileobj=pdf_buffer)
+                    attachmentdata.close()
 
         with open(savepath, "wb") as output_stream:
             writer.write(output_stream)
