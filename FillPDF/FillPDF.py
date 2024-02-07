@@ -108,14 +108,14 @@ class FillOnkostennota:
         self.boekhoudpost_vervoer = "615000"
         self.max_onkosten = 16
 
-    def fill(self, filepath: str, savepath: str, volgnummer: str = None,
+    def fill(self, filedata: str, savepath: str, volgnummer: str = None,
              gegevens: OnkostennotaGegevensDictionary = None,
              onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,
-             vervoersonkosten_vergoeding: Decimal = None, attachmentpaths: list[str] = None) -> None:
+             vervoersonkosten_vergoeding: Decimal = None, attachmentsdata: list[str] = None) -> None:
         """
         Functie die automatisch de onkostennota template invult.
 
-        :param filepath: Waar te bewerken bestand staat.
+        :param filedata: Data van het te bewerken bestand.
         :param savepath: Waar de onkostennota op te slaan.
         :param volgnummer: Volgnummer van de onkostennota.
         :param gegevens: Gegevens van de persoon die de onkosten gedaan heeft.
@@ -125,7 +125,7 @@ class FillOnkostennota:
         :param attachmentpaths: List of paths to attachments.
         """
         # Standaard variabelen, worden uit PDF gehaald
-        reader = PdfReader(filepath)
+        reader = PdfReader(filedata)
         writer = PdfWriter()
         writer.append(reader)
 
@@ -194,9 +194,9 @@ class FillOnkostennota:
                 auto_regenerate=False,
             )
 
-        if attachmentpaths is not None:
-            for attachmentpath in attachmentpaths:
-                writer.add_attachment(filename="", data=attachmentpath)
+        if attachmentsdata is not None:
+            for attachmentdata in attachmentsdata:
+                writer.add_attachment(filename="", data=attachmentdata)
 
         with open(savepath, "wb") as output_stream:
             writer.write(output_stream)
@@ -206,14 +206,14 @@ class Factuur:
     def __init__(self) -> None:
         self.max_producten = 10
 
-    def fill(self, filepath: str, savepath: str, volgnummer: str = None, factuurdatum: str = None,
+    def fill(self, filedata: str, savepath: str, volgnummer: str = None, factuurdatum: str = None,
              naar: FactuurNaar = None,
              producten: list[
                  FactuurGegevens] = None, dagen: str = None) -> None:
         """
         Functie die automatisch de factuur template invult.
 
-        :param filepath: Waar te bewerken bestand staat.
+        :param filedata: Data van het te bewerken bestand.
         :param savepath: Waar de factuur op te slaan.
         :param volgnummer: Volgnummer van de factuur.
         :param factuurdatum: Datum dat de factuur is opgesteld.
@@ -222,7 +222,7 @@ class Factuur:
         :param dagen: Aantal dagen dat de factuur binnen betaald moet worden.
         """
         # Standaard variabelen, worden uit PDF gehaald
-        reader = PdfReader(filepath)
+        reader = PdfReader(filedata)
         writer = PdfWriter()
         writer.append(reader)
 
@@ -323,11 +323,11 @@ class Huurcontract:
     def __init__(self) -> None:
         self.max_verhuur = 10
 
-    def fill(self, filepath: str, savepath: str, volgnummer: str = None, huurder_gegevens: HuurderGegevens = None,
+    def fill(self, filedata: str, savepath: str, volgnummer: str = None, huurder_gegevens: HuurderGegevens = None,
              verhuurde_producten: list[HuurcontractGegevens] = None, startdatum: str = None, einddatum: str = None,
              huurprijs: Decimal = None, waarborg: Decimal = None, verhuurder: str = None, huurder: str = None) -> None:
         # Standaard variabelen, worden uit PDF gehaald
-        reader = PdfReader(filepath)
+        reader = PdfReader(filedata)
         writer = PdfWriter()
         writer.append(reader)
         writer.set_need_appearances_writer(True)
