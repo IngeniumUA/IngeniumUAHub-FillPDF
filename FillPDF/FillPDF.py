@@ -332,6 +332,12 @@ class Huurcontract:
             writer.update_page_form_field_values(
                 writer.pages[0],
                 {"Volgnummer1": volgnummer},
+                auto_regenerate=False,
+            )
+            writer.update_page_form_field_values(
+                writer.pages[1],
+                {"Volgnummer2": volgnummer, "Volgnummer3": volgnummer},
+                auto_regenerate=False,
             )
 
         # Huurder gegevens invullen
@@ -340,10 +346,12 @@ class Huurcontract:
                 writer.update_page_form_field_values(
                     writer.pages[0],
                     {"BTWHuurder": huurder_gegevens["btw"]},
+                    auto_regenerate=False,
                 )
             writer.update_page_form_field_values(
                 writer.pages[0],
                 {"AdresHuurder": huurder_gegevens["adres"], "NaamHuurder1": huurder_gegevens["naam"]},
+                auto_regenerate=False,
             )
 
         # Verhuurde producten invullen
@@ -361,6 +369,7 @@ class Huurcontract:
                 writer.update_page_form_field_values(
                     writer.pages[0],
                     {materiaal_field: verhuurd_product["materiaal"], opmerkingen_field: verhuurd_product["opmerkingen"], schade_field: schadeprijs},
+                    auto_regenerate=False,
                 )
                 i += 1
 
@@ -369,12 +378,14 @@ class Huurcontract:
             writer.update_page_form_field_values(
                 writer.pages[0],
                 {"Startdatum": startdatum},
+                auto_regenerate=False,
             )
 
         if einddatum is not None:
             writer.update_page_form_field_values(
                 writer.pages[0],
                 {"Einddatum": einddatum},
+                auto_regenerate=False,
             )
 
         # Prijzen invullen
@@ -383,6 +394,7 @@ class Huurcontract:
                 writer.update_page_form_field_values(
                     writer.pages[1],
                     {"Huurprijs": str(round_half_up(huurprijs))},
+                    auto_regenerate=False,
                 )
 
         if waarborg is not None:
@@ -390,6 +402,7 @@ class Huurcontract:
                 writer.update_page_form_field_values(
                     writer.pages[1],
                     {"Waarborg": str(round_half_up(waarborg))},
+                    auto_regenerate=False,
                 )
 
         # Handtekening gegevens invullen
@@ -397,12 +410,14 @@ class Huurcontract:
             writer.update_page_form_field_values(
                 writer.pages[1],
                 {"NaamIngenium1": verhuurder, "NaamIngenium2": verhuurder},
+                auto_regenerate=False,
             )
 
         if huurder is not None:
             writer.update_page_form_field_values(
                 writer.pages[1],
                 {"NaamHuurder2": huurder, "NaamHuurder3": huurder},
+                auto_regenerate=False,
             )
 
         with open(savepath, "wb") as output_stream:
