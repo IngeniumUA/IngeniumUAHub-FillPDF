@@ -1,7 +1,8 @@
 import math
+import img2pdf
 from decimal import Decimal
 from typing import TypedDict, IO, Any
-
+from PIL import Image
 from pypdf import PdfReader, PdfWriter
 
 
@@ -111,6 +112,8 @@ class FillOnkostennota:
     def __init__(self) -> None:
         self.boekhoudpost_vervoer = "615000"
         self.max_onkosten = 16
+        self.pdf_signature = b"%PDF-"
+
 
     def fill(self, filedata: IO[Any], savepath: str, volgnummer: str = None,
              gegevens: OnkostennotaGegevensDictionary = None,
@@ -200,7 +203,12 @@ class FillOnkostennota:
 
         if attachmentsdata is not None:
             for attachmentdata in attachmentsdata:
-                writer.merge(fileobj=attachmentdata, position=0)
+                if attachmentdata.read(len(self.pdf_signature)) == self.pdf_signature:
+                    writer.append(fileobj=attachmentdata)
+                else:
+                    image = Image.open(attachmentdata)
+                    pdf_bytes = img2pdf.convert(image)
+                    writer.append(fileobj=pdf_bytes)
 
         with open(savepath, "wb") as output_stream:
             writer.write(output_stream)

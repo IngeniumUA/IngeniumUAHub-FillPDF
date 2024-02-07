@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="FillPDF",
-    version="52.0",
+    version="53.0",
     description="Used to automatically fill PDF's",
     author="Yorben Joosen",
     author_email="webmaster@ingeniumua.be",
@@ -11,5 +11,7 @@ setup(
     package_data={"FillPDF": ["templates/*.*"]},
     install_requires=[
         "pypdf",
+        "Pillow",
+        "img2pdf",
     ],  # external packages as dependencies
 )
