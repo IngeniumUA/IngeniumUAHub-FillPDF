@@ -198,12 +198,12 @@ class FillOnkostennota:
                 auto_regenerate=False,
             )
 
-        with open(savepath, "wb") as output_stream:
-            writer.write(output_stream)
-
         if attachmentsdata is not None:
             for attachmentdata in attachmentsdata:
-                writer.append(attachmentdata)
+                writer.merge(fileobj=attachmentdata, position=0)
+
+        with open(savepath, "wb") as output_stream:
+            writer.write(output_stream)
 
 
 class Factuur:
