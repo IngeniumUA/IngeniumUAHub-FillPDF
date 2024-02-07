@@ -1,8 +1,7 @@
 import io
 import math
-import img2pdf
 from decimal import Decimal
-from typing import TypedDict, IO, Any
+from typing import TypedDict
 from PIL import Image
 from pypdf import PdfReader, PdfWriter
 from reportlab.pdfgen import canvas
@@ -225,9 +224,11 @@ class FillOnkostennota:
                             image_width *= ratio
                             image_height = page_height
 
-                    x = (page_width - image.width) / 2
-                    y = (page_height - image.height) / 2
-                    pdf.drawInlineImage(image=image, x=0, y=0, width=image_width, height=image_height)
+                    # (0,0) is lower left corner
+                    x = 0
+                    y = page_height - image_height
+
+                    pdf.drawInlineImage(image=image, x=x, y=y, width=image_width, height=image_height)
                     pdf.save()
                     pdf_buffer.seek(0)
                     attachmentdata.write(pdf_buffer.read())
