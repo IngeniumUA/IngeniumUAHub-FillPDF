@@ -133,7 +133,7 @@ class FillOnkostennota:
         :param attachmentsdata: Lijst van attachments data.
         """
         # Standaard variabelen, worden uit PDF gehaald
-        reader = PdfReader(filedata)
+        reader = PdfReader(filedata, strict=False)
         writer = PdfWriter()
         writer.append(reader)
 
@@ -231,8 +231,7 @@ class FillOnkostennota:
                     pdf.drawInlineImage(image=image, x=x, y=y, width=image_width, height=image_height)
                     pdf.save()
                     pdf_buffer.seek(0)
-                    pdf_content = b"%PDF-" + pdf_buffer.getvalue()
-                    attachmentdata.write(pdf_content)
+                    attachmentdata.write(pdf_buffer.read())
                     pdf_buffer.close()
                     writer.append(fileobj=attachmentdata)
                     attachmentdata.close()
