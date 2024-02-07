@@ -331,7 +331,12 @@ class Huurcontract:
         if volgnummer is not None:
             writer.update_page_form_field_values(
                 writer.pages[0],
-                {"Volgnummer": volgnummer},
+                {"Volgnummer1": volgnummer},
+                auto_regenerate=False,
+            )
+            writer.update_page_form_field_values(
+                writer.pages[1],
+                {"Volgnummer2": volgnummer, "Volgnummer3": volgnummer},
                 auto_regenerate=False,
             )
 
@@ -404,14 +409,14 @@ class Huurcontract:
         if verhuurder is not None:
             writer.update_page_form_field_values(
                 writer.pages[1],
-                {"NaamIngenium": verhuurder},
+                {"NaamIngenium1": verhuurder, "NaamIngenium2": verhuurder},
                 auto_regenerate=False,
             )
 
         if huurder is not None:
             writer.update_page_form_field_values(
                 writer.pages[1],
-                {"NaamHuurder2": huurder},
+                {"NaamHuurder2": huurder, "NaamHuurder3": huurder},
                 auto_regenerate=False,
             )
 
