@@ -1,7 +1,7 @@
 import math
 import os
 from decimal import Decimal
-from typing import TypedDict
+from typing import TypedDict, IO, Any
 
 from pypdf import PdfReader, PdfWriter
 
@@ -108,7 +108,7 @@ class FillOnkostennota:
         self.boekhoudpost_vervoer = "615000"
         self.max_onkosten = 16
 
-    def fill(self, filedata: bytes, savepath: str, volgnummer: str = None,
+    def fill(self, filedata: IO[Any], savepath: str, volgnummer: str = None,
              gegevens: OnkostennotaGegevensDictionary = None,
              onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,
              vervoersonkosten_vergoeding: Decimal = None, attachmentsdata: list[bytes] = None) -> None:
