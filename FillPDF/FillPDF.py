@@ -209,10 +209,31 @@ class FillOnkostennota:
                     writer.append(fileobj=attachmentdata)
                 else:
                     image = Image.open(attachmentdata)
-                    pdf_bytes = io.BytesIO()
-                    img2pdf.convert(image=attachmentdata.getvalue(), output=pdf_bytes)
-                    pdf_bytes.seek(0)
-                    writer.append(fileobj=pdf_bytes)
+                    pdf_buffer = io.BytesIO()
+                    pdf = canvas.Canvas(pdf_buffer, pagesize=A4)
+                    page_width, page_height = A4
+                    image_width = image.width
+                    image_height = image.height
+
+                    if image_width > page_width or image_height > page_height:
+                        if image_width > image_height:
+                            ratio = page_width / image_width
+                            image_height *= ratio
+                            image_width = page_width
+                        else:
+                            ratio = page_height / image_height
+                            image_width *= ratio
+                            image_height = page_height
+
+                    x = (page_width - image.width) / 2
+                    y = (page_height - image.height) / 2
+                    pdf.drawInlineImage(image=image, x=x, y=y, width=image_width, height=image_height)
+                    pdf.save()
+                    pdf_buffer.seek(0)
+                    attachmentdata.write(pdf_buffer.read())
+                    pdf_buffer.close()
+                    writer.append(fileobj=attachmentdata)
+                    attachmentdata.close()
 
         with open(savepath, "wb") as output_stream:
             writer.write(output_stream)
