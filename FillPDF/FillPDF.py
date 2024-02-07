@@ -6,8 +6,6 @@ from typing import TypedDict
 from pypdf import PdfReader, PdfWriter
 
 
-# TODO make it so that pdf has to be given, otherwise updates cant be made
-
 class OnkostennotaOnkostenDictionary(TypedDict):
     """
     Dictionary die alle gegevens van de onkost opslaat, wordt ook gebruikt voor type hinting.
@@ -74,6 +72,32 @@ class FactuurGegevens(TypedDict):
     btw: Decimal
 
 
+class HuurderGegevens(TypedDict):
+    """
+    Dictionary die de gegevens van de huurder opslaat, wordt ook gebruikt voor type hinting.
+
+    :param naam: Naam van de huurder.
+    :param adres: Adres van de huurder.
+    :param btw: Eventueel BTW nummer van de huurder.
+    """
+    naam: str
+    adres: str
+    btw: str | None
+
+
+class HuurcontractGegevens(TypedDict):
+    """
+    Dictionary die de gegevens van het verhuurde opslaat, wordt ook gebruikt voor type hinting.
+
+    :param materiaal: Welk materiaal en hoeveel dat verhuurd wordt.
+    :param opmerkingen: Opmerkingen over het verhuurde.
+    :param schadeprijs: Kost per stuk bij verlies of schade.
+    """
+    materiaal: str
+    opmerkingen: str | None
+    schadeprijs: Decimal
+
+
 def round_half_up(number, decimals=2):
     multiplier = 10 ** decimals
     return math.floor(number * multiplier + 0.5) / multiplier
@@ -84,12 +108,14 @@ class FillOnkostennota:
         self.boekhoudpost_vervoer = "615000"
         self.max_onkosten = 16
 
-    def fill(self, savepath: str, volgnummer: str = None, gegevens: OnkostennotaGegevensDictionary = None,
+    def fill(self, filepath: str, savepath: str, volgnummer: str = None,
+             gegevens: OnkostennotaGegevensDictionary = None,
              onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,
              vervoersonkosten_vergoeding: Decimal = None) -> None:
         """
         Functie die automatisch de onkostennota template invult.
 
+        :param filepath: Waar te bewerken bestand staat.
         :param savepath: Waar de onkostennota op te slaan.
         :param volgnummer: Volgnummer van de onkostennota.
         :param gegevens: Gegevens van de persoon die de onkosten gedaan heeft.
@@ -98,8 +124,7 @@ class FillOnkostennota:
         :param vervoersonkosten_vergoeding: Hoeveel er per km vergoed wordt.
         """
         # Standaard variabelen, worden uit PDF gehaald
-        template_dir = os.path.join(os.path.dirname(__file__), "templates")
-        reader = PdfReader(os.path.join(template_dir, "Onkostennota.pdf"))
+        reader = PdfReader(filepath)
         writer = PdfWriter()
         writer.append(reader)
 
@@ -176,12 +201,14 @@ class Factuur:
     def __init__(self) -> None:
         self.max_producten = 10
 
-    def fill(self, savepath: str, volgnummer: str = None, factuurdatum: str = None, naar: FactuurNaar = None,
+    def fill(self, filepath: str, savepath: str, volgnummer: str = None, factuurdatum: str = None,
+             naar: FactuurNaar = None,
              producten: list[
                  FactuurGegevens] = None, dagen: str = None) -> None:
         """
         Functie die automatisch de factuur template invult.
 
+        :param filepath: Waar te bewerken bestand staat.
         :param savepath: Waar de factuur op te slaan.
         :param volgnummer: Volgnummer van de factuur.
         :param factuurdatum: Datum dat de factuur is opgesteld.
@@ -190,8 +217,7 @@ class Factuur:
         :param dagen: Aantal dagen dat de factuur binnen betaald moet worden.
         """
         # Standaard variabelen, worden uit PDF gehaald
-        template_dir = os.path.join(os.path.dirname(__file__), "templates")
-        reader = PdfReader(os.path.join(template_dir, "Factuur.pdf"))
+        reader = PdfReader(filepath)
         writer = PdfWriter()
         writer.append(reader)
 
@@ -281,6 +307,115 @@ class Factuur:
                 writer.pages[0],
                 {"TotaalExclusief": str(round_half_up(totaal_exclusief, 2)),
                  "TotaalInclusief": str(round_half_up(totaal_inclusief, 2))},
+                auto_regenerate=False,
+            )
+
+        with open(savepath, "wb") as output_stream:
+            writer.write(output_stream)
+
+
+class Huurcontract:
+    def __init__(self) -> None:
+        self.max_verhuur = 10
+
+    def fill(self, filepath: str, savepath: str, volgnummer: str = None, huurder_gegevens: HuurderGegevens = None,
+             verhuurde_producten: list[HuurcontractGegevens] = None, startdatum: str = None, einddatum: str = None,
+             huurprijs: Decimal = None, waarborg: Decimal = None, verhuurder: str = None, huurder: str = None) -> None:
+        # Standaard variabelen, worden uit PDF gehaald
+        reader = PdfReader(filepath)
+        writer = PdfWriter()
+        writer.append(reader)
+
+        # Volgnummer invullen
+        if volgnummer is not None:
+            writer.update_page_form_field_values(
+                writer.pages[0],
+                {"Volgnummer": volgnummer},
+                auto_regenerate=False,
+            )
+            writer.update_page_form_field_values(
+                writer.pages[1],
+                {"Volgnummer": volgnummer},
+                auto_regenerate=False,
+            )
+
+        # Huurder gegevens invullen
+        if huurder_gegevens is not None:
+            if huurder_gegevens["btw"] is not None:
+                writer.update_page_form_field_values(
+                    writer.pages[0],
+                    {"BTWHuurder": huurder_gegevens["btw"]},
+                    auto_regenerate=False,
+                )
+            writer.update_page_form_field_values(
+                writer.pages[0],
+                {"AdresHuurder": huurder_gegevens["adres"], "NaamHuurder": huurder_gegevens["naam"]},
+                auto_regenerate=False,
+            )
+
+        # Verhuurde producten invullen
+        if verhuurde_producten is not None:
+            if len(verhuurde_producten) > self.max_verhuur:
+                raise Exception("Er zijn meer producten dan in het contract passen.")
+            i = 1
+            for verhuurd_product in verhuurde_producten:
+                # Field names
+                materiaal_field = "Materiaal" + str(i)
+                opmerkingen_field = "Opmerkingen" + str(i)
+                schade_field = "Schade" + str(i)
+                schadeprijs = str(round_half_up(verhuurd_product["schadeprijs"])) + " €/stuk"
+
+                writer.update_page_form_field_values(
+                    writer.pages[0],
+                    {materiaal_field: verhuurd_product["materiaal"], opmerkingen_field: verhuurd_product["opmerkingen"], schade_field: schadeprijs},
+                    auto_regenerate=False,
+                )
+                i += 1
+
+        # Datum invullen
+        if startdatum is not None:
+            writer.update_page_form_field_values(
+                writer.pages[0],
+                {"Startdatum": startdatum},
+                auto_regenerate=False,
+            )
+
+        if einddatum is not None:
+            writer.update_page_form_field_values(
+                writer.pages[0],
+                {"Einddatum": einddatum},
+                auto_regenerate=False,
+            )
+
+        # Prijzen invullen
+        if huurprijs is not None:
+            if startdatum is not None:
+                writer.update_page_form_field_values(
+                    writer.pages[1],
+                    {"Huurprijs": huurprijs},
+                    auto_regenerate=False,
+                )
+
+        if waarborg is not None:
+            if startdatum is not None:
+                writer.update_page_form_field_values(
+                    writer.pages[1],
+                    {"Waarborg": writer},
+                    auto_regenerate=False,
+                )
+
+        # Handtekening gegevens invullen
+        if verhuurder is not None:
+            writer.update_page_form_field_values(
+                writer.pages[1],
+                {"NaamIngenium": verhuurder},
+                auto_regenerate=False,
+            )
+
+        if huurder is not None:
+            writer.update_page_form_field_values(
+                writer.pages[1],
+                {"NaamHuurder": huurder},
                 auto_regenerate=False,
             )
 
