@@ -99,8 +99,8 @@ class HuurcontractGegevens(TypedDict):
 
 
 def round_half_up(number, decimals=2):
-    multiplier = 10 ** decimals
-    return math.floor(number * multiplier + 0.5) / multiplier
+    multiplier = Decimal(10 ** decimals)
+    return math.floor(number * multiplier + Decimal(0.5)) / multiplier
 
 
 class FillOnkostennota:
