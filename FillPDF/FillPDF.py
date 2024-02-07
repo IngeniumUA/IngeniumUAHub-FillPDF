@@ -227,7 +227,7 @@ class FillOnkostennota:
 
                     x = (page_width - image.width) / 2
                     y = (page_height - image.height) / 2
-                    pdf.drawInlineImage(image=image, x=x, y=y, width=image_width, height=image_height)
+                    pdf.drawInlineImage(image=image, x=0, y=0, width=image_width, height=image_height)
                     pdf.save()
                     pdf_buffer.seek(0)
                     attachmentdata.write(pdf_buffer.read())
