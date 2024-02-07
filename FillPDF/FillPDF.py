@@ -1,5 +1,4 @@
 import math
-import os
 from decimal import Decimal
 from typing import TypedDict, IO, Any
 
@@ -201,7 +200,8 @@ class FillOnkostennota:
 
         if attachmentsdata is not None:
             for attachmentdata in attachmentsdata:
-                writer.add_attachment(filename=attachmentdata["naam"], data=attachmentdata["data"].decode("utf-8"))
+                writer.add_blank_page()
+                writer.add_attachment(filename=attachmentdata["naam"], data=attachmentdata["data"])
 
         with open(savepath, "wb") as output_stream:
             writer.write(output_stream)
@@ -378,7 +378,8 @@ class Huurcontract:
 
                 writer.update_page_form_field_values(
                     writer.pages[0],
-                    {materiaal_field: verhuurd_product["materiaal"], opmerkingen_field: verhuurd_product["opmerkingen"], schade_field: schadeprijs},
+                    {materiaal_field: verhuurd_product["materiaal"], opmerkingen_field: verhuurd_product["opmerkingen"],
+                     schade_field: schadeprijs},
                     auto_regenerate=False,
                 )
                 i += 1
