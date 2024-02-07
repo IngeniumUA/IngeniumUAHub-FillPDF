@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="FillPDF",
-    version="34.0",
+    version="35.0",
     description="Used to automatically fill PDF's",
     author="Yorben Joosen",
     author_email="webmaster@ingeniumua.be",

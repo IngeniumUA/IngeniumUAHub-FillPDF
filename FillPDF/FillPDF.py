@@ -414,7 +414,7 @@ class Huurcontract:
 
         if huurder is not None:
             writer.update_page_form_field_values(
-                writer.pages[1],
+                writer.get_page(1),
                 {"NaamHuurder2": huurder},
                 auto_regenerate=False,
             )
