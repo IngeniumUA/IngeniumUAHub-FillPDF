@@ -115,7 +115,7 @@ class FillOnkostennota:
     def fill(self, filedata: IO[Any], savepath: str, volgnummer: str = None,
              gegevens: OnkostennotaGegevensDictionary = None,
              onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,
-             vervoersonkosten_vergoeding: Decimal = None, attachmentsdata: list[str] = None) -> None:
+             vervoersonkosten_vergoeding: Decimal = None, attachmentsdata: list[AttachmentData] = None) -> None:
         """
         Functie die automatisch de onkostennota template invult.
 
@@ -201,9 +201,7 @@ class FillOnkostennota:
         if attachmentsdata is not None:
             for attachmentdata in attachmentsdata:
                 writer.add_blank_page()
-                with open(attachmentdata, 'rb') as f:
-                    attachment_data = f.read()
-                writer.add_attachment(filename="test", data=attachment_data)
+                writer.add_attachment(filename=attachmentdata["naam"], data=attachmentdata["data"])
 
         with open(savepath, "wb") as output_stream:
             writer.write(output_stream)
