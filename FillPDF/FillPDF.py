@@ -210,8 +210,8 @@ class FillOnkostennota:
                 else:
                     image = Image.open(attachmentdata)
                     pdf_buffer = io.BytesIO()
-                    pdf = canvas.Canvas(pdf_buffer, pagesize=letter)
-                    width, height = letter
+                    pdf = canvas.Canvas(pdf_buffer, pagesize=A4)
+                    width, height = A4
                     aspect_ratio = width / float(image.width)
                     pdf.drawInlineImage(image, 0, 0, width, height * aspect_ratio)
                     pdf.save()
