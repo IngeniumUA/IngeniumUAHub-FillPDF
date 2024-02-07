@@ -349,7 +349,7 @@ class Huurcontract:
                 )
             writer.update_page_form_field_values(
                 writer.pages[0],
-                {"AdresHuurder": huurder_gegevens["adres"], "NaamHuurder": huurder_gegevens["naam"]},
+                {"AdresHuurder": huurder_gegevens["adres"], "NaamHuurder1": huurder_gegevens["naam"]},
                 auto_regenerate=False,
             )
 
@@ -415,7 +415,7 @@ class Huurcontract:
         if huurder is not None:
             writer.update_page_form_field_values(
                 writer.pages[1],
-                {"NaamHuurder": huurder},
+                {"NaamHuurder2": huurder},
                 auto_regenerate=False,
             )
 
