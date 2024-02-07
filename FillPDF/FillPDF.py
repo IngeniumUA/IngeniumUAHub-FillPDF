@@ -325,6 +325,7 @@ class Huurcontract:
         reader = PdfReader(filepath)
         writer = PdfWriter()
         writer.append(reader)
+        writer.set_need_appearances_writer(True)
 
         # Volgnummer invullen
         if volgnummer is not None:
@@ -414,7 +415,7 @@ class Huurcontract:
 
         if huurder is not None:
             writer.update_page_form_field_values(
-                writer.get_page(1),
+                writer.pages[1],
                 {"NaamHuurder2": huurder},
                 auto_regenerate=False,
             )
