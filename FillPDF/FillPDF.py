@@ -108,10 +108,10 @@ class FillOnkostennota:
         self.boekhoudpost_vervoer = "615000"
         self.max_onkosten = 16
 
-    def fill(self, filedata: str, savepath: str, volgnummer: str = None,
+    def fill(self, filedata: bytes, savepath: str, volgnummer: str = None,
              gegevens: OnkostennotaGegevensDictionary = None,
              onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,
-             vervoersonkosten_vergoeding: Decimal = None, attachmentsdata: list[str] = None) -> None:
+             vervoersonkosten_vergoeding: Decimal = None, attachmentsdata: list[bytes] = None) -> None:
         """
         Functie die automatisch de onkostennota template invult.
 
@@ -122,7 +122,7 @@ class FillOnkostennota:
         :param onkosten: Lijst met de onkosten als dictionary. Maximaal 16.
         :param betaaldatum: Wanneer onkostennota effectief betaald wordt.
         :param vervoersonkosten_vergoeding: Hoeveel er per km vergoed wordt.
-        :param attachmentpaths: List of paths to attachments.
+        :param attachmentsdata: Lijst van attachments data.
         """
         # Standaard variabelen, worden uit PDF gehaald
         reader = PdfReader(filedata)
