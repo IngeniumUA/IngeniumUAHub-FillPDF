@@ -111,7 +111,7 @@ class FillOnkostennota:
     def fill(self, filepath: str, savepath: str, volgnummer: str = None,
              gegevens: OnkostennotaGegevensDictionary = None,
              onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,
-             vervoersonkosten_vergoeding: Decimal = None) -> None:
+             vervoersonkosten_vergoeding: Decimal = None, attachmentpaths: list[str] = None) -> None:
         """
         Functie die automatisch de onkostennota template invult.
 
@@ -122,6 +122,7 @@ class FillOnkostennota:
         :param onkosten: Lijst met de onkosten als dictionary. Maximaal 16.
         :param betaaldatum: Wanneer onkostennota effectief betaald wordt.
         :param vervoersonkosten_vergoeding: Hoeveel er per km vergoed wordt.
+        :param attachmentpaths: List of paths to attachments.
         """
         # Standaard variabelen, worden uit PDF gehaald
         reader = PdfReader(filepath)
@@ -192,6 +193,10 @@ class FillOnkostennota:
                 {"Totaal": str(totaal)},
                 auto_regenerate=False,
             )
+
+        if attachmentpaths is not None:
+            for attachmentpath in attachmentpaths:
+                writer.add_attachment(filename="", data=attachmentpath)
 
         with open(savepath, "wb") as output_stream:
             writer.write(output_stream)
