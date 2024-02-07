@@ -218,7 +218,7 @@ class FillOnkostennota:
                     pdf_buffer.seek(0)
                     attachmentdata.write(pdf_buffer.read())
                     pdf_buffer.close()
-                    writer.append(fileobj=pdf_buffer)
+                    writer.append(fileobj=attachmentdata)
                     attachmentdata.close()
 
         with open(savepath, "wb") as output_stream:
