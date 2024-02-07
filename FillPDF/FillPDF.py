@@ -236,7 +236,8 @@ class FillOnkostennota:
                     attachmentdata.close()"""
 
                     pdf_bytes = io.BytesIO()
-                    img2pdf.convert(image=image, output=pdf_bytes)
+                    img2pdf.convert(image=attachmentdata, output=pdf_bytes)
+                    pdf_bytes.seek(0)
                     writer.append(fileobj=pdf_bytes)
 
         with open(savepath, "wb") as output_stream:
