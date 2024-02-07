@@ -117,10 +117,10 @@ class FillOnkostennota:
         self.max_onkosten = 16
         self.pdf_signature = b"%PDF-"
 
-    def fill(self, filedata: IO[Any], savepath: str, volgnummer: str = None,
+    def fill(self, filedata: IO[io.BytesIO], savepath: str, volgnummer: str = None,
              gegevens: OnkostennotaGegevensDictionary = None,
              onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,
-             vervoersonkosten_vergoeding: Decimal = None, attachmentsdata: list[IO[Any]] = None) -> None:
+             vervoersonkosten_vergoeding: Decimal = None, attachmentsdata: list[io.BytesIO] = None) -> None:
         """
         Functie die automatisch de onkostennota template invult.
 
@@ -210,7 +210,7 @@ class FillOnkostennota:
                 else:
                     image = Image.open(attachmentdata)
                     pdf_bytes = io.BytesIO()
-                    img2pdf.convert(image=str(attachmentdata), output=pdf_bytes)
+                    img2pdf.convert(image=attachmentdata.getvalue(), output=pdf_bytes)
                     pdf_bytes.seek(0)
                     writer.append(fileobj=pdf_bytes)
 
