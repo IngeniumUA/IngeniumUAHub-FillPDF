@@ -201,7 +201,7 @@ class FillOnkostennota:
 
         if attachmentsdata is not None:
             for attachmentdata in attachmentsdata:
-                writer.add_attachment(filename=attachmentdata["naam"], data=attachmentdata["data"])
+                writer.add_attachment(filename=attachmentdata["naam"], data=attachmentdata["data"].decode("utf-8"))
 
         with open(savepath, "wb") as output_stream:
             writer.write(output_stream)
