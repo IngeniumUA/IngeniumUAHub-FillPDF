@@ -392,7 +392,7 @@ class Huurcontract:
             if startdatum is not None:
                 writer.update_page_form_field_values(
                     writer.pages[1],
-                    {"Huurprijs": huurprijs},
+                    {"Huurprijs": str(round_half_up(huurprijs))},
                     auto_regenerate=False,
                 )
 
@@ -400,7 +400,7 @@ class Huurcontract:
             if startdatum is not None:
                 writer.update_page_form_field_values(
                     writer.pages[1],
-                    {"Waarborg": writer},
+                    {"Waarborg": str(round_half_up(waarborg))},
                     auto_regenerate=False,
                 )
 
