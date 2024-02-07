@@ -334,11 +334,6 @@ class Huurcontract:
                 {"Volgnummer": volgnummer},
                 auto_regenerate=False,
             )
-            writer.update_page_form_field_values(
-                writer.pages[1],
-                {"Volgnummer": volgnummer},
-                auto_regenerate=False,
-            )
 
         # Huurder gegevens invullen
         if huurder_gegevens is not None:
