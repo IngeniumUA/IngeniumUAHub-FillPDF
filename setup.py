@@ -1,14 +1,14 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="FillPDF",
+    name="fillpdf",
     version="68.0",
     description="Used to automatically fill PDF's",
     author="Yorben Joosen",
     author_email="webmaster@ingeniumua.be",
     packages=find_packages(),  # same as name
     include_package_data=True,
-    package_data={"FillPDF": ["templates/*.*"]},
+    package_data={"fillpdf": ["templates/*.*"]},
     install_requires=[
         "pypdf",
         "Pillow",
