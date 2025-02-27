@@ -1,0 +1,19 @@
+name: RuffLinting
+
+on: [ push, pull_request ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-python@v5
+          with:
+            python-version: 3.13
+        - run: pip install ruff
+        - run: | 
+            ruff format fillpdf --config pyproject.toml
+            ruff check --fix --config pyproject.toml
+        - uses: stefanzweifel/git-auto-commit-action@v5
+          with:
+            commit_message: 'Automated style fixes by ruff'
