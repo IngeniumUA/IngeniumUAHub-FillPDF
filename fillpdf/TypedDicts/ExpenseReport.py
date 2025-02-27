@@ -13,3 +13,8 @@ class ExpenseReportData(TypedDict):
     journal_entry: str
     description: str
     cost_or_km: int
+
+
+class AttachmentData(TypedDict):
+    name: str
+    data: bytes
