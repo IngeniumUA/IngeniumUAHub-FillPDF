@@ -3,15 +3,20 @@ from pypdf import PdfReader, PdfWriter
 
 class ExpenseReport:
     def __init__(self) -> None:
+        self.travel_expense_reimbursement = None
         self.max_amount = None
         self.boekhoudpost_vervoer = "615000"
-        self.max_onkosten = 16
         self.pdf_signature = b"%PDF-"
 
     async def change_max_amount(self, new_max_amount) -> None:
         self.max_amount = new_max_amount
+        
+    async def change_travel_expenses_reimbursement(self, new_travel_expenses_reimbursement) -> None:
+        self.travel_expense_reimbursement = new_travel_expenses_reimbursement
 
-    def fill(self, filedata: io.BytesIO, savepath: str, volgnummer: str = None,
+    async def fill(self, reference_number: int, ):
+
+    def filldd(self, filedata: io.BytesIO, savepath: str, volgnummer: str = None,
              gegevens: OnkostennotaGegevensDictionary = None,
              onkosten: list[OnkostennotaOnkostenDictionary] = None, betaaldatum: str = None,
              vervoersonkosten_vergoeding: Decimal = None, attachmentsdata: list[io.BytesIO] = None) -> None:
