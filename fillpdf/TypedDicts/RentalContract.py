@@ -7,7 +7,7 @@ class TenantData(TypedDict):
     vat_number: str | None
 
 
-class RentalContractData(TypedDict):
+class ProductData(TypedDict):
     material: str
     remarks: str | None
     damage_cost: int

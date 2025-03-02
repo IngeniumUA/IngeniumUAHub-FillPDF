@@ -1,3 +1,10 @@
+from typing import List
+
+from pypdf import PdfReader, PdfWriter
+
+from fillpdf.TypedDicts.RentalContract import TenantData, ProductData
+
+
 class RentalContract:
     def __init__(self) -> None:
         self.max_amount = None
@@ -6,108 +13,55 @@ class RentalContract:
     async def change_max_amount(self, new_max_amount) -> None:
         self.max_amount = new_max_amount
 
-    def fill(self, filedata: str, savepath: str, volgnummer: str = None, huurder_gegevens: HuurderGegevens = None,
-             verhuurde_producten: list[HuurcontractGegevens] = None, startdatum: str = None, einddatum: str = None,
-             huurprijs: Decimal = None, waarborg: Decimal = None, verhuurder: str = None, huurder: str = None) -> None:
-        # Standaard variabelen, worden uit PDF gehaald
-        reader = PdfReader(filedata)
+    def fill(self, reference_number: int, tenant_data: TenantData, products: List[ProductData], start_date: str, end_date: str, rent_cost: int, deposit_cost: int, renter: str) -> None:
+        """
+
+        :param reference_number:
+        :param tenant_data:
+        :param products:
+        :param start_date:
+        :param end_date:
+        :param rent_cost:
+        :param deposit_cost:
+        :param renter:
+        """
+        reader = PdfReader("fillpdf/Templates/Invoice.pdf", strict=False)
         writer = PdfWriter()
         writer.append(reader)
         writer.set_need_appearances_writer(True)
 
-        # Volgnummer invullen
-        if volgnummer is not None:
+        writer.update_page_form_field_values(
+            writer.pages[0],
+            {
+                "Volgnummer1": str(reference_number),
+                "Volgnummer2": str(reference_number),
+                "Volgnummer3": str(reference_number),
+                "BTWHuurder": tenant_data.get("vat_number") or "",
+                "AdresHuurder": tenant_data.get("full_address"),
+                "NaamHuurder1": tenant_data.get("full_name"),
+                "NaamHuurder2": tenant_data.get("full_name"),
+                "NaamHuurder3": tenant_data.get("full_name"),
+                "Startdatum": start_date,
+                "Einddatum": end_date,
+                "Huurprijs": str(rent_cost / 100),
+                "Waarborg": str(deposit_cost / 100),
+                "NaamIngenium1": renter,
+                "NaamIngenium2": renter,
+            },
+            auto_regenerate=False,
+        )
+
+        if len(products) > self.max_amount:
+            raise Exception(f"Max allowed products is {self.max_amount}, but received {len(products)}.")
+
+        i = 1
+        for product in products:
             writer.update_page_form_field_values(
                 writer.pages[0],
-                {"Volgnummer1": volgnummer},
+                {
+                    "Materiaal" + str(i): product.get("material"),
+                    "Opmerkingen" + str(i): product.get("remarks") or "",
+                    "Schade" + str(i): str(product.get("damage_cost") / 100) + " €/stuk"},
                 auto_regenerate=False,
             )
-            writer.update_page_form_field_values(
-                writer.pages[1],
-                {"Volgnummer2": volgnummer, "Volgnummer3": volgnummer},
-                auto_regenerate=False,
-            )
-
-        # Huurder gegevens invullen
-        if huurder_gegevens is not None:
-            if huurder_gegevens["btw"] is not None:
-                writer.update_page_form_field_values(
-                    writer.pages[0],
-                    {"BTWHuurder": huurder_gegevens["btw"]},
-                    auto_regenerate=False,
-                )
-            writer.update_page_form_field_values(
-                writer.pages[0],
-                {"AdresHuurder": huurder_gegevens["adres"], "NaamHuurder1": huurder_gegevens["naam"]},
-                auto_regenerate=False,
-            )
-
-        # Verhuurde producten invullen
-        if verhuurde_producten is not None:
-            if len(verhuurde_producten) > self.max_verhuur:
-                raise Exception("Er zijn meer producten dan in het contract passen.")
-            i = 1
-            for verhuurd_product in verhuurde_producten:
-                # Field names
-                materiaal_field = "Materiaal" + str(i)
-                opmerkingen_field = "Opmerkingen" + str(i)
-                schade_field = "Schade" + str(i)
-                schadeprijs = str(round_half_up(verhuurd_product["schadeprijs"])) + " €/stuk"
-
-                writer.update_page_form_field_values(
-                    writer.pages[0],
-                    {materiaal_field: verhuurd_product["materiaal"], opmerkingen_field: verhuurd_product["opmerkingen"],
-                     schade_field: schadeprijs},
-                    auto_regenerate=False,
-                )
-                i += 1
-
-        # Datum invullen
-        if startdatum is not None:
-            writer.update_page_form_field_values(
-                writer.pages[0],
-                {"Startdatum": startdatum},
-                auto_regenerate=False,
-            )
-
-        if einddatum is not None:
-            writer.update_page_form_field_values(
-                writer.pages[0],
-                {"Einddatum": einddatum},
-                auto_regenerate=False,
-            )
-
-        # Prijzen invullen
-        if huurprijs is not None:
-            if startdatum is not None:
-                writer.update_page_form_field_values(
-                    writer.pages[1],
-                    {"Huurprijs": str(round_half_up(huurprijs))},
-                    auto_regenerate=False,
-                )
-
-        if waarborg is not None:
-            if startdatum is not None:
-                writer.update_page_form_field_values(
-                    writer.pages[1],
-                    {"Waarborg": str(round_half_up(waarborg))},
-                    auto_regenerate=False,
-                )
-
-        # Handtekening gegevens invullen
-        if verhuurder is not None:
-            writer.update_page_form_field_values(
-                writer.pages[1],
-                {"NaamIngenium1": verhuurder, "NaamIngenium2": verhuurder},
-                auto_regenerate=False,
-            )
-
-        if huurder is not None:
-            writer.update_page_form_field_values(
-                writer.pages[1],
-                {"NaamHuurder2": huurder, "NaamHuurder3": huurder},
-                auto_regenerate=False,
-            )
-
-        with open(savepath, "wb") as output_stream:
-            writer.write(output_stream)
+            i += 1

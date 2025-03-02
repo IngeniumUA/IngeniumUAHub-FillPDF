@@ -10,11 +10,6 @@ class ExpenseReportRecipientData(TypedDict):
 
 
 class ExpenseReportData(TypedDict):
-    journal_entry: str
+    journal_entry: int
     description: str
     cost_or_km: int
-
-
-class AttachmentData(TypedDict):
-    name: str
-    data: bytes

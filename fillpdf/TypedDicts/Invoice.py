@@ -10,8 +10,8 @@ class InvoiceRecipientData(TypedDict):
     order_number: str | None
 
 
-class InvoiceData(TypedDict):
-    journal_entry: str
+class InvoiceProductsData(TypedDict):
+    journal_entry: int
     description: str
     cost: int
     amount: int
