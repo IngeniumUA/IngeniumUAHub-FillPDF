@@ -1,6 +1,10 @@
 class Huurcontract:
     def __init__(self) -> None:
+        self.max_amount = None
         self.max_verhuur = 10
+
+    async def change_max_amount(self, new_max_amount) -> None:
+        self.max_amount = new_max_amount
 
     def fill(self, filedata: str, savepath: str, volgnummer: str = None, huurder_gegevens: HuurderGegevens = None,
              verhuurde_producten: list[HuurcontractGegevens] = None, startdatum: str = None, einddatum: str = None,
