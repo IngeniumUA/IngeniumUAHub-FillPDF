@@ -13,7 +13,17 @@ class RentalContract:
     async def change_max_amount(self, new_max_amount) -> None:
         self.max_amount = new_max_amount
 
-    def fill(self, reference_number: int, tenant_data: TenantData, products: List[ProductData], start_date: str, end_date: str, rent_cost: int, deposit_cost: int, renter: str) -> None:
+    def fill(
+        self,
+        reference_number: int,
+        tenant_data: TenantData,
+        products: List[ProductData],
+        start_date: str,
+        end_date: str,
+        rent_cost: int,
+        deposit_cost: int,
+        renter: str,
+    ) -> None:
         """
 
         :param reference_number:
@@ -52,7 +62,9 @@ class RentalContract:
         )
 
         if len(products) > self.max_amount:
-            raise Exception(f"Max allowed products is {self.max_amount}, but received {len(products)}.")
+            raise Exception(
+                f"Max allowed products is {self.max_amount}, but received {len(products)}."
+            )
 
         i = 1
         for product in products:
@@ -61,7 +73,9 @@ class RentalContract:
                 {
                     "Materiaal" + str(i): product.get("material"),
                     "Opmerkingen" + str(i): product.get("remarks") or "",
-                    "Schade" + str(i): str(product.get("damage_cost") / 100) + " €/stuk"},
+                    "Schade" + str(i): str(product.get("damage_cost") / 100)
+                    + " €/stuk",
+                },
                 auto_regenerate=False,
             )
             i += 1

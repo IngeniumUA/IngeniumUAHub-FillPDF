@@ -12,8 +12,14 @@ class Invoice:
     async def change_max_amount(self, new_max_amount) -> None:
         self.max_amount = new_max_amount
 
-    async def fill(self, reference_number: int, date: str, days: int, recipient_data: InvoiceRecipientData,
-                   products: List[InvoiceProductsData]) -> None:
+    async def fill(
+        self,
+        reference_number: int,
+        date: str,
+        days: int,
+        recipient_data: InvoiceRecipientData,
+        products: List[InvoiceProductsData],
+    ) -> None:
         """
         Fills the template Invoice.pdf with the given information
         :param days: The amount of days the recipient has to pay
@@ -29,21 +35,24 @@ class Invoice:
 
         writer.update_page_form_field_values(
             writer.pages[0],
-            {"Volgnummer": str(reference_number),
-             "Factuurdatum": date,
-             "Betaaldagen": str(days),
-             "Begunstigde": recipient_data.get("beneficiary"),
-             "Departement": recipient_data.get("department") or "",
-             "Adres1": recipient_data.get("street_and_house_number"),
-             "Adres2": recipient_data.get("municipality_and_zip_code"),
-             "BTW": recipient_data.get("vat_number") or "",
-             "Ordernummer": recipient_data.get("order_number") or "",
-             },
-            auto_regenerate=False
+            {
+                "Volgnummer": str(reference_number),
+                "Factuurdatum": date,
+                "Betaaldagen": str(days),
+                "Begunstigde": recipient_data.get("beneficiary"),
+                "Departement": recipient_data.get("department") or "",
+                "Adres1": recipient_data.get("street_and_house_number"),
+                "Adres2": recipient_data.get("municipality_and_zip_code"),
+                "BTW": recipient_data.get("vat_number") or "",
+                "Ordernummer": recipient_data.get("order_number") or "",
+            },
+            auto_regenerate=False,
         )
 
         if len(products) > self.max_amount:
-            raise Exception(f"Max allowed products is {self.max_amount}, but received {len(products)}.")
+            raise Exception(
+                f"Max allowed products is {self.max_amount}, but received {len(products)}."
+            )
         i = 1
         total_inclusive = 0
         total_exclusive = 0
@@ -61,7 +70,8 @@ class Invoice:
                     "Prijs" + str(i): str(product.get("cost")),
                     "Aantal" + str(i): str(product.get("amount")),
                     "BTW" + str(i): str(product.get("vat_amount")),
-                    "Totaal" + str(i): str(total_product / 100)},
+                    "Totaal" + str(i): str(total_product / 100),
+                },
                 auto_regenerate=False,
             )
             i += 1
@@ -70,6 +80,7 @@ class Invoice:
             writer.pages[0],
             {
                 "TotaalExclusief": str(total_exclusive / 100),
-                "TotaalInclusief": str(total_inclusive / 100), },
+                "TotaalInclusief": str(total_inclusive / 100),
+            },
             auto_regenerate=False,
         )
