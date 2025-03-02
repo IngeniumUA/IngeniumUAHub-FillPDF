@@ -1,4 +1,4 @@
-class Factuur:
+class Invoice:
     def __init__(self) -> None:
         self.max_amount = None
         self.max_producten = 10

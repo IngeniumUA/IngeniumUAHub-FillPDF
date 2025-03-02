@@ -1,4 +1,4 @@
-class Huurcontract:
+class RentalContract:
     def __init__(self) -> None:
         self.max_amount = None
         self.max_verhuur = 10
