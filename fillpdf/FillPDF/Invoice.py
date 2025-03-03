@@ -1,5 +1,5 @@
 import io
-from typing import List, Any, Coroutine
+from typing import List
 
 from pypdf import PdfReader, PdfWriter
 
