@@ -1,5 +1,5 @@
 import io
-from typing import List
+from typing import List, Any, Coroutine
 
 from PIL import Image
 from pypdf import PdfReader, PdfWriter
@@ -61,7 +61,7 @@ class ExpenseReport:
         expenses: List[ExpenseReportData],
         date: str,
         attachments: List[io.BytesIO],
-    ) -> None:
+    ) -> bytes | None:
         """
 
         :param reference_number:
@@ -145,3 +145,10 @@ class ExpenseReport:
                     pdf_buffer.seek(0)
                     writer.append(fileobj=pdf_buffer)
                     pdf_buffer.close()
+
+        # Write final combined PDF to buffer and return bytes
+        output_buffer = io.BytesIO()
+        writer.write(output_buffer)
+        output_buffer.seek(0)
+
+        return output_buffer.getvalue()

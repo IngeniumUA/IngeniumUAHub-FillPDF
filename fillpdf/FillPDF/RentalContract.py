@@ -1,3 +1,4 @@
+import io
 from typing import List
 
 from pypdf import PdfReader, PdfWriter
@@ -23,7 +24,7 @@ class RentalContract:
         rent_cost: int,
         deposit_cost: int,
         renter: str,
-    ) -> None:
+    ) -> bytes:
         """
 
         :param reference_number:
@@ -79,3 +80,10 @@ class RentalContract:
                 auto_regenerate=False,
             )
             i += 1
+
+        # Write final combined PDF to buffer and return bytes
+        output_buffer = io.BytesIO()
+        writer.write(output_buffer)
+        output_buffer.seek(0)
+
+        return output_buffer.getvalue()

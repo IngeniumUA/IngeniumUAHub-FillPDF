@@ -1,4 +1,5 @@
-from typing import List
+import io
+from typing import List, Any, Coroutine
 
 from pypdf import PdfReader, PdfWriter
 
@@ -19,7 +20,7 @@ class Invoice:
         days: int,
         recipient_data: InvoiceRecipientData,
         products: List[InvoiceProductsData],
-    ) -> None:
+    ) -> bytes:
         """
         Fills the template Invoice.pdf with the given information
         :param days: The amount of days the recipient has to pay
@@ -84,3 +85,10 @@ class Invoice:
             },
             auto_regenerate=False,
         )
+
+        # Write final combined PDF to buffer and return bytes
+        output_buffer = io.BytesIO()
+        writer.write(output_buffer)
+        output_buffer.seek(0)
+
+        return output_buffer.getvalue()
