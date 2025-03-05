@@ -38,15 +38,15 @@ class ExpenseReport:
         return image_width, image_height
 
     async def fill(
-            self,
-            reference_number: int,
-            recipient_data: ExpenseReportRecipientData,
-            expenses: List[ExpenseReportData],
-            date: str,
-            attachments: List[bytes],
-            template: bytes,
-            travel_expenses_reimbursement: int,
-            max_amount: int,
+        self,
+        reference_number: int,
+        recipient_data: ExpenseReportRecipientData,
+        expenses: List[ExpenseReportData],
+        date: str,
+        attachments: List[bytes],
+        template: bytes,
+        travel_expenses_reimbursement: int,
+        max_amount: int,
     ) -> bytes | None:
         """
 
