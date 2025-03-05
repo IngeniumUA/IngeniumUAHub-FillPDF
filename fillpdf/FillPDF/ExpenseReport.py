@@ -59,7 +59,7 @@ class ExpenseReport:
         recipient_data: ExpenseReportRecipientData,
         expenses: List[ExpenseReportData],
         date: str,
-        attachments: List[io.BytesIO],
+        attachments: List[bytes],
     ) -> bytes | None:
         """
 
@@ -123,8 +123,9 @@ class ExpenseReport:
 
         if attachments:
             for attachment in attachments:
-                if attachment.read(len(b"%PDF-")) == b"%PDF-":
-                    writer.append(fileobj=attachment)
+                byte_stream = io.BytesIO(attachment)
+                if byte_stream.read(len(b"%PDF-")) == b"%PDF-":
+                    writer.append(fileobj=byte_stream)
                 else:
                     image = Image.open(attachment)
                     pdf_buffer = io.BytesIO()
