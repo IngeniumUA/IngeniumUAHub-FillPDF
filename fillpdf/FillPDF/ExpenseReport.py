@@ -60,9 +60,11 @@ class ExpenseReport:
         expenses: List[ExpenseReportData],
         date: str,
         attachments: List[bytes],
+        template: bytes,
     ) -> bytes | None:
         """
 
+        :param template:
         :param reference_number:
         :param recipient_data:
         :param expenses:
@@ -70,7 +72,8 @@ class ExpenseReport:
         :param attachments:
         """
         # Get standard variables out of the pdf
-        reader = PdfReader("fillpdf/Templates/ExpenseReport.pdf", strict=False)
+        byte_stream = io.BytesIO(template)
+        reader = PdfReader(byte_stream, strict=False)
         writer = PdfWriter()
         writer.append(reader)
 

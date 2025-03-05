@@ -20,6 +20,7 @@ class Invoice:
         days: int,
         recipient_data: InvoiceRecipientData,
         products: List[InvoiceProductsData],
+        template: bytes,
     ) -> bytes:
         """
         Fills the template Invoice.pdf with the given information
@@ -30,7 +31,8 @@ class Invoice:
         :param products: List of products that are sold
         """
         # Get standard variables out of the pdf
-        reader = PdfReader("fillpdf/Templates/Invoice.pdf", strict=False)
+        byte_stream = io.BytesIO(template)
+        reader = PdfReader(byte_stream, strict=False)
         writer = PdfWriter()
         writer.append(reader)
 

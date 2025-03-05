@@ -23,9 +23,11 @@ class RentalContract:
         rent_cost: int,
         deposit_cost: int,
         renter: str,
+        template: bytes,
     ) -> bytes:
         """
 
+        :param template:
         :param reference_number:
         :param tenant_data:
         :param products:
@@ -35,7 +37,8 @@ class RentalContract:
         :param deposit_cost:
         :param renter:
         """
-        reader = PdfReader("fillpdf/Templates/Invoice.pdf", strict=False)
+        byte_stream = io.BytesIO(template)
+        reader = PdfReader(byte_stream, strict=False)
         writer = PdfWriter()
         writer.append(reader)
         writer.set_need_appearances_writer(True)
