@@ -59,8 +59,8 @@ class ExpenseReport:
         recipient_data: ExpenseReportRecipientData,
         expenses: List[ExpenseReportData],
         date: str,
-        attachments: List[bytes],
         template: bytes,
+        attachments: List[bytes] = None
     ) -> bytes | None:
         """
 
