@@ -37,16 +37,30 @@ class ExpenseReport:
 
         return image_width, image_height
 
+    async def change_max_amount(self, new_max_amount) -> None:
+        """
+
+        :param new_max_amount:
+        """
+        self.max_amount = new_max_amount
+
+    async def change_travel_expenses_reimbursement(
+        self, new_travel_expenses_reimbursement
+    ) -> None:
+        """
+
+        :param new_travel_expenses_reimbursement:
+        """
+        self.travel_expense_reimbursement = new_travel_expenses_reimbursement
+
     async def fill(
-            self,
-            reference_number: int,
-            recipient_data: ExpenseReportRecipientData,
-            expenses: List[ExpenseReportData],
-            date: str,
-            attachments: List[bytes],
-            template: bytes,
-            travel_expenses_reimbursement: int,
-            max_amount: int,
+        self,
+        reference_number: int,
+        recipient_data: ExpenseReportRecipientData,
+        expenses: List[ExpenseReportData],
+        date: str,
+        attachments: List[bytes],
+        template: bytes,
     ) -> bytes | None:
         """
 
@@ -66,7 +80,7 @@ class ExpenseReport:
         writer.update_page_form_field_values(
             writer.pages[0],
             {
-                "Vervoersonkosten": str(travel_expenses_reimbursement / 100),
+                "Vervoersonkosten": str(self.travel_expense_reimbursement / 100),
                 "Volgnummer": str(reference_number),
                 "DatumVoldaan": date,
                 " Voornaam": recipient_data.get("name"),
