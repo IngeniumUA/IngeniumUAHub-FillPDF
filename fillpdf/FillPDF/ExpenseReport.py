@@ -16,7 +16,6 @@ class ExpenseReport:
     def __init__(self) -> None:
         self.travel_expense_reimbursement = None
         self.max_amount = None
-        self.boekhoudpost_vervoer = "615000"
 
     async def _resize_image_to_a4(self, image, page_width, page_height):
         """

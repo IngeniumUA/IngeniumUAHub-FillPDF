@@ -9,7 +9,6 @@ from fillpdf.TypedDicts.RentalContract import TenantData, ProductData
 class RentalContract:
     def __init__(self) -> None:
         self.max_amount = None
-        self.max_verhuur = 10
 
     async def change_max_amount(self, new_max_amount) -> None:
         self.max_amount = new_max_amount
