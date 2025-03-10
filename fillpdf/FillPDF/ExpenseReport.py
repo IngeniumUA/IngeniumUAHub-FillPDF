@@ -83,7 +83,7 @@ class ExpenseReport:
                 "Vervoersonkosten": str(self.travel_expense_reimbursement / 100),
                 "Volgnummer": str(reference_number),
                 "DatumVoldaan": date,
-                "Voornaam": (recipient_data.get("name"), "/DIRegularN2014-", 12),
+                "Voornaam": (recipient_data.get("name"), "/DIN2014-Regular", 12),
                 "Naam": (recipient_data.get("surname"), "/DIN2014-Regular", 12),
                 "Email": (recipient_data.get("email_address"), "/DIN2014-Regular", 12),
                 "Rekeningnummer": (recipient_data.get("account_number"), "/DIN2014-Regular", 12),
