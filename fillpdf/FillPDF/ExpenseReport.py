@@ -166,6 +166,7 @@ class ExpenseReport:
 
         # Write final combined PDF to buffer and return bytes
         output_buffer = io.BytesIO()
+        writer.clean_page(page=writer.pages[0])
         writer.write(output_buffer)
         output_buffer.seek(0)
 
