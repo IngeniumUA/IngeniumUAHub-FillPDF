@@ -86,7 +86,11 @@ class ExpenseReport:
                 "Voornaam": (recipient_data.get("name"), "/DIRegularN2014-", 12),
                 "Naam": (recipient_data.get("surname"), "/DIN2014-Regular", 12),
                 "Email": (recipient_data.get("email_address"), "/DIN2014-Regular", 12),
-                "Rekeningnummer": (recipient_data.get("account_number"), "/DIN2014-Regular", 12),
+                "Rekeningnummer": (
+                    recipient_data.get("account_number"),
+                    "/DIN2014-Regular",
+                    12,
+                ),
                 "DatumGemaakt": recipient_data.get("date"),
             },
             auto_regenerate=False,
