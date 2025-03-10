@@ -83,10 +83,10 @@ class ExpenseReport:
                 "Vervoersonkosten": str(self.travel_expense_reimbursement / 100),
                 "Volgnummer": str(reference_number),
                 "DatumVoldaan": date,
-                " Voornaam": recipient_data.get("name"),
-                "Naam": recipient_data.get("surname"),
-                "Email": recipient_data.get("email_address"),
-                "Rekeningnummer": recipient_data.get("account_number"),
+                "Voornaam": (recipient_data.get("name"), "/DIRegularN2014-", 12),
+                "Naam": (recipient_data.get("surname"), "/DIN2014-Regular", 12),
+                "Email": (recipient_data.get("email_address"), "/DIN2014-Regular", 12),
+                "Rekeningnummer": (recipient_data.get("account_number"), "/DIN2014-Regular", 12),
                 "DatumGemaakt": recipient_data.get("date"),
             },
             auto_regenerate=False,
@@ -96,7 +96,6 @@ class ExpenseReport:
             raise Exception(
                 f"Max allowed expenses is {self.max_amount}, but received {len(expenses)}."
             )
-
         i = 1
         total = 0
         for expense in expenses:
@@ -108,7 +107,7 @@ class ExpenseReport:
             writer.update_page_form_field_values(
                 writer.pages[0],
                 {
-                    "Boekhoudpost" + str(i): str(expense.get("journal_entry")),
+                    "Boekhoudpost" + str(i): expense.get("journal_entry"),
                     "Beschrijving" + str(i): expense.get("description"),
                     "Prijs" + str(i): str(temporary_price / 100),
                 },
