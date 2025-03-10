@@ -42,12 +42,32 @@ class Invoice:
                 "Volgnummer": (str(reference_number), "/DIN2014-Regular", 12),
                 "Factuurdatum": (date, "/DIN2014-Regular", 12),
                 "Betaaldagen": (str(days), "/DIN2014-Regular", 12),
-                "Begunstigde": (recipient_data.get("beneficiary"), "/DIN2014-Regular", 12),
-                "Departement": (recipient_data.get("department") or "", "/DIN2014-Regular", 12),
-                "Adres1": (recipient_data.get("street_and_house_number"), "/DIN2014-Regular", 12),
-                "Adres2": (recipient_data.get("municipality_and_zip_code"), "/DIN2014-Regular", 12),
+                "Begunstigde": (
+                    recipient_data.get("beneficiary"),
+                    "/DIN2014-Regular",
+                    12,
+                ),
+                "Departement": (
+                    recipient_data.get("department") or "",
+                    "/DIN2014-Regular",
+                    12,
+                ),
+                "Adres1": (
+                    recipient_data.get("street_and_house_number"),
+                    "/DIN2014-Regular",
+                    12,
+                ),
+                "Adres2": (
+                    recipient_data.get("municipality_and_zip_code"),
+                    "/DIN2014-Regular",
+                    12,
+                ),
                 "BTW": (recipient_data.get("vat_number") or "", "/DIN2014-Regular", 12),
-                "Ordernummer": (recipient_data.get("order_number") or "", "/DIN2014-Regular", 12),
+                "Ordernummer": (
+                    recipient_data.get("order_number") or "",
+                    "/DIN2014-Regular",
+                    12,
+                ),
             },
             auto_regenerate=False,
         )
@@ -68,12 +88,36 @@ class Invoice:
             writer.update_page_form_field_values(
                 writer.pages[0],
                 {
-                    "Boekhoudpost" + str(i): (str(product.get("journal_entry")), "/DIN2014-Regular", 12),
-                    "Beschrijving" + str(i): (product.get("description"), "/DIN2014-Regular", 12),
-                    "Prijs" + str(i): (str(product.get("cost")), "/DIN2014-Regular", 12),
-                    "Aantal" + str(i): (str(product.get("amount")), "/DIN2014-Regular", 12),
-                    "BTW" + str(i): (str(product.get("vat_amount")), "/DIN2014-Regular", 12),
-                    "Totaal" + str(i): (str(total_product / 100), "/DIN2014-Regular", 12),
+                    "Boekhoudpost" + str(i): (
+                        str(product.get("journal_entry")),
+                        "/DIN2014-Regular",
+                        12,
+                    ),
+                    "Beschrijving" + str(i): (
+                        product.get("description"),
+                        "/DIN2014-Regular",
+                        12,
+                    ),
+                    "Prijs" + str(i): (
+                        str(product.get("cost")),
+                        "/DIN2014-Regular",
+                        12,
+                    ),
+                    "Aantal" + str(i): (
+                        str(product.get("amount")),
+                        "/DIN2014-Regular",
+                        12,
+                    ),
+                    "BTW" + str(i): (
+                        str(product.get("vat_amount")),
+                        "/DIN2014-Regular",
+                        12,
+                    ),
+                    "Totaal" + str(i): (
+                        str(total_product / 100),
+                        "/DIN2014-Regular",
+                        12,
+                    ),
                 },
                 auto_regenerate=False,
             )

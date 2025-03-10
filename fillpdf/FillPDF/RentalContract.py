@@ -49,8 +49,16 @@ class RentalContract:
                 "Volgnummer1": (str(reference_number), "/DIN2014-Regular", 12),
                 "Volgnummer2": (str(reference_number), "/DIN2014-Regular", 12),
                 "Volgnummer3": (str(reference_number), "/DIN2014-Regular", 12),
-                "BTWHuurder": (tenant_data.get("vat_number") or "", "/DIN2014-Regular", 12),
-                "AdresHuurder": (tenant_data.get("full_address"), "/DIN2014-Regular", 12),
+                "BTWHuurder": (
+                    tenant_data.get("vat_number") or "",
+                    "/DIN2014-Regular",
+                    12,
+                ),
+                "AdresHuurder": (
+                    tenant_data.get("full_address"),
+                    "/DIN2014-Regular",
+                    12,
+                ),
                 "NaamHuurder1": (tenant_data.get("full_name"), "/DIN2014-Regular", 12),
                 "NaamHuurder2": (tenant_data.get("full_name"), "/DIN2014-Regular", 12),
                 "NaamHuurder3": (tenant_data.get("full_name"), "/DIN2014-Regular", 12),
@@ -74,10 +82,21 @@ class RentalContract:
             writer.update_page_form_field_values(
                 writer.pages[0],
                 {
-                    "Materiaal" + str(i): (product.get("material"), "/DIN2014-Regular", 12),
-                    "Opmerkingen" + str(i): (product.get("remarks") or "", "/DIN2014-Regular", 12),
-                    "Schade" + str(i): (str(product.get("damage_cost") / 100)
-                    + " €/stuk", "/DIN2014-Regular", 12),
+                    "Materiaal" + str(i): (
+                        product.get("material"),
+                        "/DIN2014-Regular",
+                        12,
+                    ),
+                    "Opmerkingen" + str(i): (
+                        product.get("remarks") or "",
+                        "/DIN2014-Regular",
+                        12,
+                    ),
+                    "Schade" + str(i): (
+                        str(product.get("damage_cost") / 100) + " €/stuk",
+                        "/DIN2014-Regular",
+                        12,
+                    ),
                 },
                 auto_regenerate=False,
             )

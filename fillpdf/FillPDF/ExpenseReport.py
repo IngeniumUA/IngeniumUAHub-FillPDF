@@ -111,9 +111,21 @@ class ExpenseReport:
             writer.update_page_form_field_values(
                 writer.pages[0],
                 {
-                    "Boekhoudpost" + str(i): (expense.get("journal_entry"), "/DIN2014-Regular", 12),
-                    "Beschrijving" + str(i): (expense.get("description"), "/DIN2014-Regular", 12),
-                    "Prijs" + str(i): (str(temporary_price / 100), "/DIN2014-Regular", 12),
+                    "Boekhoudpost" + str(i): (
+                        expense.get("journal_entry"),
+                        "/DIN2014-Regular",
+                        12,
+                    ),
+                    "Beschrijving" + str(i): (
+                        expense.get("description"),
+                        "/DIN2014-Regular",
+                        12,
+                    ),
+                    "Prijs" + str(i): (
+                        str(temporary_price / 100),
+                        "/DIN2014-Regular",
+                        12,
+                    ),
                 },
                 auto_regenerate=False,
             )
