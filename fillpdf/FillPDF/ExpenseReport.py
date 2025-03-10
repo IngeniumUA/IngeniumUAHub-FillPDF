@@ -91,7 +91,7 @@ class ExpenseReport:
                     "/DIN2014-Regular",
                     12,
                 ),
-                "DatumGemaakt": recipient_data.get("date"),
+                "DatumGemaakt": (recipient_data.get("date"), "/DIN2014-Regular", 12),
             },
             auto_regenerate=False,
         )
@@ -111,9 +111,9 @@ class ExpenseReport:
             writer.update_page_form_field_values(
                 writer.pages[0],
                 {
-                    "Boekhoudpost" + str(i): expense.get("journal_entry"),
-                    "Beschrijving" + str(i): expense.get("description"),
-                    "Prijs" + str(i): str(temporary_price / 100),
+                    "Boekhoudpost" + str(i): (expense.get("journal_entry"), "/DIN2014-Regular", 12),
+                    "Beschrijving" + str(i): (expense.get("description"), "/DIN2014-Regular", 12),
+                    "Prijs" + str(i): (str(temporary_price / 100), "/DIN2014-Regular", 12),
                 },
                 auto_regenerate=False,
             )
@@ -123,7 +123,7 @@ class ExpenseReport:
 
             writer.update_page_form_field_values(
                 writer.pages[0],
-                {"Totaal": str(total / 100)},
+                {"Totaal": (str(total / 100), "/DIN2014-Regular", 12)},
                 auto_regenerate=False,
             )
 

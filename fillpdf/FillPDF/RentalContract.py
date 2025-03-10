@@ -46,20 +46,20 @@ class RentalContract:
         writer.update_page_form_field_values(
             writer.pages[0],
             {
-                "Volgnummer1": str(reference_number),
-                "Volgnummer2": str(reference_number),
-                "Volgnummer3": str(reference_number),
-                "BTWHuurder": tenant_data.get("vat_number") or "",
-                "AdresHuurder": tenant_data.get("full_address"),
-                "NaamHuurder1": tenant_data.get("full_name"),
-                "NaamHuurder2": tenant_data.get("full_name"),
-                "NaamHuurder3": tenant_data.get("full_name"),
-                "Startdatum": start_date,
-                "Einddatum": end_date,
-                "Huurprijs": str(rent_cost / 100),
-                "Waarborg": str(deposit_cost / 100),
-                "NaamIngenium1": renter,
-                "NaamIngenium2": renter,
+                "Volgnummer1": (str(reference_number), "/DIN2014-Regular", 12),
+                "Volgnummer2": (str(reference_number), "/DIN2014-Regular", 12),
+                "Volgnummer3": (str(reference_number), "/DIN2014-Regular", 12),
+                "BTWHuurder": (tenant_data.get("vat_number") or "", "/DIN2014-Regular", 12),
+                "AdresHuurder": (tenant_data.get("full_address"), "/DIN2014-Regular", 12),
+                "NaamHuurder1": (tenant_data.get("full_name"), "/DIN2014-Regular", 12),
+                "NaamHuurder2": (tenant_data.get("full_name"), "/DIN2014-Regular", 12),
+                "NaamHuurder3": (tenant_data.get("full_name"), "/DIN2014-Regular", 12),
+                "Startdatum": (start_date, "/DIN2014-Regular", 12),
+                "Einddatum": (end_date, "/DIN2014-Regular", 12),
+                "Huurprijs": (str(rent_cost / 100), "/DIN2014-Regular", 12),
+                "Waarborg": (str(deposit_cost / 100), "/DIN2014-Regular", 12),
+                "NaamIngenium1": (renter, "/DIN2014-Regular", 12),
+                "NaamIngenium2": (renter, "/DIN2014-Regular", 12),
             },
             auto_regenerate=False,
         )
@@ -74,10 +74,10 @@ class RentalContract:
             writer.update_page_form_field_values(
                 writer.pages[0],
                 {
-                    "Materiaal" + str(i): product.get("material"),
-                    "Opmerkingen" + str(i): product.get("remarks") or "",
-                    "Schade" + str(i): str(product.get("damage_cost") / 100)
-                    + " €/stuk",
+                    "Materiaal" + str(i): (product.get("material"), "/DIN2014-Regular", 12),
+                    "Opmerkingen" + str(i): (product.get("remarks") or "", "/DIN2014-Regular", 12),
+                    "Schade" + str(i): (str(product.get("damage_cost") / 100)
+                    + " €/stuk", "/DIN2014-Regular", 12),
                 },
                 auto_regenerate=False,
             )
